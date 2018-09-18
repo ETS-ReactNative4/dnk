@@ -1,0 +1,19 @@
+.button {
+	padding: 12px 50px;
+	border: none;
+	background-color: #fff;
+	border-radius: 5px;
+	color: #000;
+	cursor: pointer;
+	font-family: Proxima;
+	font-size: 18px;
+	font-weight: 600;
+	letter-spacing: -0.7px;
+	line-height: 1.33;
+}
+
+.button .transparent {
+	border: 1px solid #fff;
+	background: transparent;
+	color: #fff;
+}
