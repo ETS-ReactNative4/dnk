@@ -56,13 +56,13 @@ class Docs extends Component {
 	}
 
 	componentDidMount() {
-		// let login = prompt('Логин Yclients')
-		// let password = prompt('Пароль Yclients')
+		let login = prompt('Логин Yclients')
+		let password = prompt('Пароль Yclients')
 
 		this.setState({
 			authData: {
-				login: 'arslanbek.khasiev@mail.ru',
-				password: '119794979',
+				login,
+				password,
 			}
 		}, () => {
 			console.log(this.state.auth)
@@ -286,7 +286,7 @@ class Docs extends Component {
 							</select>
 
 							<div className="dateField">
-								<label className="date">
+								<div className="date">
 									<p className="dateNotes">Период:</p>
 									<DatePicker
 										selected={this.state.startDate}
@@ -303,18 +303,18 @@ class Docs extends Component {
 										endDate={this.state.endDate}
 										onChange={this.handleDatapickerEnd}
 									/>
-								</label>
+								</div>
 							</div>
 
 							<div className="dateField">
-								<label className="date">
+								<div className="date">
 									<p className="dateNotes">Отчетный день:</p>
 									<DatePicker
 										selected={this.state.reportDate}
 										startDate={this.state.reportDate}
 										onChange={this.handleDatapickerReport}
 									/>
-								</label>
+								</div>
 							</div>
 
 							<Button type="submit" className="staffButton">Подтвердить выбор</Button>
