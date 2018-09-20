@@ -11,6 +11,8 @@ import styles from './App.css'
 require('moment/locale/ru');
 moment.locale('ru');
 
+
+
 const request = async ({url, method = 'GET', data, headers = {}} /* : RequestType */) /* : Promise<Object> */ => {
 	try {
 		const response = await fetch(url, {
@@ -49,17 +51,18 @@ class Docs extends Component {
 		password: null,
 		startDate: moment(),
 		endDate: moment(),
-		reportDate: moment()
+		reportDate: moment(),
+		complete: false,
 	}
 
 	componentDidMount() {
-		let login = prompt('Логин Yclients')
-		let password = prompt('Пароль Yclients')
+		// let login = prompt('Логин Yclients')
+		// let password = prompt('Пароль Yclients')
 
 		this.setState({
 			authData: {
-				login,
-				password,
+				login: 'arslanbek.khasiev@mail.ru',
+				password: '119794979',
 			}
 		}, () => {
 			console.log(this.state.auth)
@@ -110,66 +113,126 @@ class Docs extends Component {
 				'Authorization': `Bearer ${partnerID}, User ${userID}`,
 			},
 			data: this.state.authData,
-		}).then(({ data: res }) => {
+		}).then(({ data: staffsClients }) => {
 			const allMobiles = []
 			const attendantMobiles = []
 			const notAttendantMobiles = []
+			const aimedClients = []
+			const attendant = []
 
-			// вообще все записи
-			for (let i = 0; i < res.length; i++) {
-				if (res[i].attendance !== -1) {
-					allMobiles.push(res[i].client.phone)
-				} else if (res[i].client.phone !== "") {
-					notAttendantMobiles.push(res[i].client.phone)
+
+			// &staff_id=${choosenStaffID}
+			// Получаем вообще все записи = staffsClients
+			// Фильтруем на записи staffID
+			// Мапим записи StaffID
+			// Берем номер телефона и ищем повтор во всем списке (также фильтр по дате и то, что другой staffID)
+			//
+
+			// вообще все записи сотрудника
+			for (let i = 0; i < staffsClients.length; i++) {
+				if (staffsClients[i].attendance !== -1) {
+					allMobiles.push(staffsClients[i].client.phone)
+				} else if (staffsClients[i].client.phone !== "") {
+					notAttendantMobiles.push(staffsClients[i].client.phone)
 				}
 			}
 
-			// все кто пришел
-			for (let j = 0; j < res.length; j++) {
-				if (res[j].attendance === 1 && res[j].client.phone !== "" && moment(reportDate) > moment(res[j].datetime)) {
-					attendantMobiles.push(res[j].client.phone)
+			// все кто пришел сотрудника
+			for (let j = 0; j < staffsClients.length; j++) {
+				if (staffsClients[j].attendance === 1 && staffsClients[j].client.phone !== "" && moment(reportDate) > moment(staffsClients[j].datetime)) {
+					attendant.push(staffsClients[j])
+					attendantMobiles.push(staffsClients[j].client.phone)
 				}
 			}
 
-			const returnsOfAttendant = allMobiles.filter(item => attendantMobiles.includes(item))
-
-			// все кто пришел
-			// Вообще все записи
-			// Из всех записей, мы берем только тех, кто приходил
-			// Получаем список
-
-			const uniqMobiles = new Set(returnsOfAttendant)
-			const returnMobiles = attendantMobiles.length - uniqMobiles.size
-			const uniqAttendantMobiles = new Set(attendantMobiles)
-
-			console.log(allMobiles, 'ВСЕ ЗАПИСИ')
-			console.log(attendantMobiles, 'все кто пришел до сегодня') // нужно сделать до отчетного дня
-			console.log(uniqAttendantMobiles, 'все кто пришел до сегодня без дублей') // здесь нужно убрать те, что есть в
-			console.log(returnsOfAttendant, 'все кто пришел и их них записан до конца периода')
-			const arrayOfUniqMobiles = Array.from(uniqMobiles)
-			console.log(arrayOfUniqMobiles, 'все кто пришел и записан без дублей')
-			console.log(returnMobiles, 'все кто пришел и их них записан до конца периода —  все кто пришел и записан без дублей')
+			console.dir(staffsClients, 'staffsClients');
 
 
-			const arrayOfReturnMobiles = attendantMobiles.filter(item => {
-				// console.log(item, 'item', arrayOfUniqMobiles, 'arrayOfUniqMobiles', returnsOfAttendant, 'returnsOfAttendant')
-				if (!arrayOfUniqMobiles.includes(item)) {
-					return item
-				}
-			})
+			const delayedRequest = () => (
+				request({
+					url: `https://api.yclients.com/api/v1/records/${companyID}&start_date=${requestStartDate}&end_date=${requestEndDate}&count=100000`,
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${partnerID}, User ${userID}`,
+					},
+					data: this.state.authData,
+				})
+			)
 
-			const percentOfReturns = (returnMobiles / uniqAttendantMobiles.size) * 100
+			async function processArray(array) {
+				await delayedRequest().then(( { data: allClients }) => {
+					console.log(allClients, 'allClients')
+					console.log(staffsClients, 'staffsClients')
+					console.log(attendant, 'attendant')
 
-			this.setState({
-				staffResult: {
-					allMobiles, // все записи на весь срок, кроме не пришедших
-					attendantMobiles, // все кто пришел до отчетного дня
-					notAttendantMobiles, // все кто не пришел до отчетного дня
-					returnsOfAttendant, // все кто записался до конца периода из тех кто пришел
-					uniqMobiles,
-					returnMobiles,
-					percentOfReturns,
-				},
+					allClients.map(client => {
+						console.log(client.attendance !== -1, client.staff_id !== choosenStaffID, 'b', client.staff_id, choosenStaffID)
+						if (client.attendance !== -1 && client.staff_id !== choosenStaffID && attendantMobiles.includes(client.client.phone)) {
+							aimedClients.push(client)
+						}
+					})
+				})
+
+				// for (const record of array) {
+				// 	await delayedRequest(record.client)
+				// }
+
+				attendant.filter(attendantClient => {
+					return aimedClients.filter(aimedClient => {
+						if (attendantClient.client.phone === aimedClient.client.phone && moment(attendantClient.datetime) < moment(aimedClient.datetime)) {
+							return true
+						}
+					})
+				})
+
+				return true
+			}
+
+			let complete = false
+			processArray(staffsClients).then(() => {
+				const returnsOfAttendant = allMobiles.filter(item => attendantMobiles.includes(item))
+
+				// все кто пришел сотрудника
+				// Вообще все записи сотрудника
+				// Из всех записей, мы берем только тех, кто приходил
+				// Получаем список
+
+				const uniqMobiles = new Set(returnsOfAttendant)
+				const returnMobiles = attendantMobiles.length - uniqMobiles.size
+				const uniqAttendantMobiles = new Set(attendantMobiles)
+
+				console.log(allMobiles, 'ВСЕ ЗАПИСИ')
+				console.log(attendantMobiles, 'все кто пришел до сегодня') // нужно сделать до отчетного дня
+				console.log(uniqAttendantMobiles, 'все кто пришел до сегодня без дублей') // здесь нужно убрать те, что есть в
+				console.log(returnsOfAttendant, 'все кто пришел и их них записан до конца периода')
+				const arrayOfUniqMobiles = Array.from(uniqMobiles)
+				console.log(arrayOfUniqMobiles, 'все кто пришел и записан без дублей')
+				console.log(returnMobiles, 'все кто пришел и их них записан до конца периода —  все кто пришел и записан без дублей')
+				console.log(aimedClients, 'клиенты, которые были направлены на коллег')
+
+
+				const arrayOfReturnMobiles = attendantMobiles.filter(item => {
+					// console.log(item, 'item', arrayOfUniqMobiles, 'arrayOfUniqMobiles', returnsOfAttendant, 'returnsOfAttendant')
+					if (!arrayOfUniqMobiles.includes(item)) {
+						return item
+					}
+				})
+
+				const percentOfReturns = (returnMobiles / uniqAttendantMobiles.size) * 100
+
+				this.setState({
+					staffResult: {
+						allMobiles, // все записи на весь срок, кроме не пришедших
+						attendantMobiles, // все кто пришел до отчетного дня
+						notAttendantMobiles, // все кто не пришел до отчетного дня
+						returnsOfAttendant, // все кто записался до конца периода из тех кто пришел
+						aimedClients, // направленные на других
+						uniqMobiles,
+						returnMobiles,
+						percentOfReturns,
+					},
+				})
 			})
 		})
 	}
@@ -202,7 +265,6 @@ class Docs extends Component {
 		})
 	}
 
-	handleDatapickerReport
 
 	render() {
 		const { staffs, staffResult } = this.state
@@ -288,6 +350,13 @@ class Docs extends Component {
 										<span className="name">Клиенты, которые не пришли:</span>
 										<div className="value">
 											<span>{staffResult.notAttendantMobiles.length}</span>
+										</div>
+									</div>
+
+									<div className="row">
+										<span className="name">Клиенты, которые были направлены на коллег:</span>
+										<div className="value">
+											<span>{staffResult.aimedClients.length}</span>
 										</div>
 									</div>
 
