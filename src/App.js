@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react'
+import { withCookies, Cookies } from 'react-cookie';
 
 import Button from './components/Button'
 import DatePicker from 'react-datepicker';
@@ -45,8 +46,8 @@ class Docs extends Component {
 		choosenStaffID: 264106,
 		staffResult: null,
 		authData: {
-			login: null,
-			password: null
+			login: this.props.cookies.get('login') || null,
+			password: this.props.cookies.get('password') || null
 		},
 		password: null,
 		startDate: moment(),
@@ -56,8 +57,19 @@ class Docs extends Component {
 	}
 
 	componentDidMount() {
-		let login = prompt('Логин Yclients')
-		let password = prompt('Пароль Yclients')
+		let login;
+		let password;
+
+		if (!this.state.authData.login || !this.state.authData.password) {
+			 login = prompt('Логин Yclients')
+			 password = prompt('Пароль Yclients')
+		} else {
+			login = this.state.authData.login;
+			password = this.state.authData.password;
+		}
+
+		this.props.cookies.set('login', login);
+		this.props.cookies.set('password', password);
 
 		this.setState({
 			authData: {
@@ -65,7 +77,6 @@ class Docs extends Component {
 				password,
 			}
 		}, () => {
-			console.log(this.state.auth)
 			request({
 				url: 'https://api.yclients.com/api/v1/auth',
 				method: 'POST',
@@ -114,8 +125,10 @@ class Docs extends Component {
 			},
 			data: this.state.authData,
 		}).then(({ data: staffsClients }) => {
+			const allRecords = []
 			const allMobiles = []
 			const attendantMobiles = []
+			const canceledMobiles = []
 			const notAttendantMobiles = []
 			const aimedClients = []
 			const attendant = []
@@ -135,6 +148,8 @@ class Docs extends Component {
 				} else if (staffsClients[i].client.phone !== "") {
 					notAttendantMobiles.push(staffsClients[i].client.phone)
 				}
+
+				allRecords.push(staffsClients[i].client.phone)
 			}
 
 			// все кто пришел сотрудника
@@ -142,6 +157,10 @@ class Docs extends Component {
 				if (staffsClients[j].attendance === 1 && staffsClients[j].client.phone !== "" && moment(reportDate) > moment(staffsClients[j].datetime)) {
 					attendant.push(staffsClients[j])
 					attendantMobiles.push(staffsClients[j].client.phone)
+				}
+
+				if (staffsClients[j].attendance === -1 && staffsClients[j].client.phone !== "" && moment(reportDate) > moment(staffsClients[j].datetime)) {
+					canceledMobiles.push(staffsClients[j].client.phone)
 				}
 			}
 
@@ -221,9 +240,15 @@ class Docs extends Component {
 
 				const percentOfReturns = (returnMobiles / uniqAttendantMobiles.size) * 100
 
+
+				const futureMobiles = allMobiles.length - attendantMobiles.length
+
 				this.setState({
 					staffResult: {
+						allRecords, // вообще все записи
 						allMobiles, // все записи на весь срок, кроме не пришедших
+						futureMobiles, // записи на будущие даты
+						canceledMobiles, // отказники
 						attendantMobiles, // все кто пришел до отчетного дня
 						notAttendantMobiles, // все кто не пришел до отчетного дня
 						returnsOfAttendant, // все кто записался до конца периода из тех кто пришел
@@ -332,10 +357,24 @@ class Docs extends Component {
 									<p className="staffName">{this.getStaff().name}</p>
 									<div className="period">{moment(this.state.startDate).format("DD MMMM")} — {moment(this.state.endDate).format("DD MMMM")}</div>
 
+
 									<div className="row">
-										<span className="name">Все записи:</span>
+										<span className="name">Показатель</span>
 										<div className="value">
-											<span>{staffResult.allMobiles.length}</span>
+											<span>Кол-во записей</span>
+										</div>
+										<div className="value">
+											<span>Процент</span>
+										</div>
+									</div>
+
+									<div className="row">
+										<span className="name">Записи на будущие даты:</span>
+										<div className="value">
+											<span>{staffResult.futureMobiles}</span>
+										</div>
+										<div className="value">
+											<span>{(staffResult.futureMobiles / staffResult.attendantMobiles.length * 100).toFixed(0)}%</span>
 										</div>
 									</div>
 
@@ -344,31 +383,39 @@ class Docs extends Component {
 										<div className="value">
 											<span>{staffResult.attendantMobiles.length}</span>
 										</div>
-									</div>
 
-									<div className="row">
-										<span className="name">Клиенты, которые не пришли:</span>
 										<div className="value">
-											<span>{staffResult.notAttendantMobiles.length}</span>
+											<span>100%</span>
 										</div>
 									</div>
 
 									<div className="row">
-										<span className="name">Клиенты, которые были направлены на коллег:</span>
+										<span className="name">Клиенты, которые отменились:</span>
+										<div className="value">
+											<span>{staffResult.canceledMobiles.length}</span>
+										</div>
+
+										<div className="value">
+											<span>{(staffResult.canceledMobiles.length / staffResult.allRecords.length * 100).toFixed(0)}%</span>
+										</div>
+									</div>
+
+									<div className="row">
+										<span className="name">Клиенты, которых направили к коллегам:</span>
 										<div className="value">
 											<span>{staffResult.aimedClients.length}</span>
 										</div>
-									</div>
 
-									<div className="row">
-										<span className="name">Повторные записи:</span>
 										<div className="value">
-											<span>{staffResult.returnMobiles * 2}</span>
+											<span>{(staffResult.aimedClients.length / staffResult.attendantMobiles.length * 100).toFixed(0)}%</span>
 										</div>
 									</div>
 
 									<div className="row">
-										<span className="name">Процент возвращаемости:</span>
+										<span className="name">Повторные записи (Возвращаемость):</span>
+										<div className="value">
+											<span>{staffResult.returnMobiles * 2}</span>
+										</div>
 										<div className="value">
 											<span>{((staffResult.returnMobiles * 2 / staffResult.attendantMobiles.length) * 100).toFixed(1)}%</span>
 										</div>
@@ -394,4 +441,4 @@ class Docs extends Component {
 
 // {note && <Note {...note}/>}
 
-export default Docs
+export default withCookies(Docs)

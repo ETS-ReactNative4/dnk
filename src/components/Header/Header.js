@@ -36,7 +36,7 @@ const Header = () => (
 			{!isMobile &&
 				<Link className="enter" href="https://amocrm.ru">Вход в AMO</Link>
 			}
-			<Button className="button">YClients</Button>
+			<Button className="button" href="https://yclients.com">YClients</Button>
 		</div>
 	</header>
 )
