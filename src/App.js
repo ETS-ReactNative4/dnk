@@ -125,13 +125,16 @@ class Docs extends Component {
 			},
 			data: this.state.authData,
 		}).then(({ data: staffsClients }) => {
+			const allRecordsMobiles = []
 			const allRecords = []
 			const allMobiles = []
 			const attendantMobiles = []
 			const canceledMobiles = []
 			const notAttendantMobiles = []
 			const aimedClients = []
+			const aimedClientsMobiles = []
 			const attendant = []
+			const myArr = []
 
 
 			// &staff_id=${choosenStaffID}
@@ -149,7 +152,8 @@ class Docs extends Component {
 					notAttendantMobiles.push(staffsClients[i].client.phone)
 				}
 
-				allRecords.push(staffsClients[i].client.phone)
+				allRecords.push(staffsClients[i])
+				allRecordsMobiles.push(staffsClients[i].client.phone)
 			}
 
 			// все кто пришел сотрудника
@@ -164,7 +168,7 @@ class Docs extends Component {
 				}
 			}
 
-			console.dir(staffsClients, 'staffsClients');
+
 
 
 			const delayedRequest = () => (
@@ -187,12 +191,18 @@ class Docs extends Component {
 
 					allClients.map(client => {
 						console.log(client.attendance !== -1, client.staff_id !== choosenStaffID, 'b', client.staff_id, choosenStaffID)
-						if (client.attendance !== -1 && client.staff_id !== choosenStaffID && attendantMobiles.includes(client.client.phone)) {
+						if (!aimedClientsMobiles.includes(client.client.phone) && client.attendance !== -1 && client.staff_id !== choosenStaffID && attendantMobiles.includes(client.client.phone)) {
+							aimedClientsMobiles.push(client.client.phone)
 							aimedClients.push(client)
+						}
+
+						if (attendantMobiles.includes(client.client.phone) && moment(client.datetime) > moment(reportDate) && client.staff_id === choosenStaffID) {
+							myArr.push(client)
 						}
 					})
 				})
 
+				console.log(myArr, 'myArr')
 				// for (const record of array) {
 				// 	await delayedRequest(record.client)
 				// }
@@ -221,15 +231,16 @@ class Docs extends Component {
 				const returnMobiles = attendantMobiles.length - uniqMobiles.size
 				const uniqAttendantMobiles = new Set(attendantMobiles)
 
+				console.log(allRecords, 'allRecords все записи')
 				console.log(allMobiles, 'ВСЕ ЗАПИСИ')
-				console.log(attendantMobiles, 'все кто пришел до сегодня') // нужно сделать до отчетного дня
+				console.log(attendantMobiles, 'attendantMobiles все кто пришел до сегодня') // нужно сделать до отчетного дня
 				console.log(uniqAttendantMobiles, 'все кто пришел до сегодня без дублей') // здесь нужно убрать те, что есть в
 				console.log(returnsOfAttendant, 'все кто пришел и их них записан до конца периода')
 				const arrayOfUniqMobiles = Array.from(uniqMobiles)
 				console.log(arrayOfUniqMobiles, 'все кто пришел и записан без дублей')
-				console.log(returnMobiles, 'все кто пришел и их них записан до конца периода —  все кто пришел и записан без дублей')
+				console.log(returnMobiles, 'returnMobiles все кто пришел и их них записан до конца периода —  все кто пришел и записан без дублей')
 				console.log(aimedClients, 'клиенты, которые были направлены на коллег')
-
+				console.log(myArr, 'возвращенные')
 
 				const arrayOfReturnMobiles = attendantMobiles.filter(item => {
 					// console.log(item, 'item', arrayOfUniqMobiles, 'arrayOfUniqMobiles', returnsOfAttendant, 'returnsOfAttendant')
@@ -245,7 +256,7 @@ class Docs extends Component {
 
 				this.setState({
 					staffResult: {
-						allRecords, // вообще все записи
+						allRecordsMobiles, // вообще все записи
 						allMobiles, // все записи на весь срок, кроме не пришедших
 						futureMobiles, // записи на будущие даты
 						canceledMobiles, // отказники
@@ -256,6 +267,7 @@ class Docs extends Component {
 						uniqMobiles,
 						returnMobiles,
 						percentOfReturns,
+						myArr,
 					},
 				})
 			})
@@ -396,7 +408,7 @@ class Docs extends Component {
 										</div>
 
 										<div className="value">
-											<span>{(staffResult.canceledMobiles.length / staffResult.allRecords.length * 100).toFixed(0)}%</span>
+											<span>{(staffResult.canceledMobiles.length / staffResult.allRecordsMobiles.length * 100).toFixed(0)}%</span>
 										</div>
 									</div>
 
@@ -414,10 +426,10 @@ class Docs extends Component {
 									<div className="row">
 										<span className="name">Повторные записи (Возвращаемость):</span>
 										<div className="value">
-											<span>{staffResult.returnMobiles * 2}</span>
+											<span>{staffResult.myArr.length}</span>
 										</div>
 										<div className="value">
-											<span>{((staffResult.returnMobiles * 2 / staffResult.attendantMobiles.length) * 100).toFixed(1)}%</span>
+											<span>{((staffResult.myArr.length / staffResult.attendantMobiles.length) * 100).toFixed(1)}%</span>
 										</div>
 									</div>
 								</div>
