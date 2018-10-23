@@ -136,7 +136,7 @@ class Manager extends Component {
 		// делаем фильтр сделок по ключу 'created_at'
 		// считаем count
 		request({
-			url: 'http://localhost:3001',
+			url: 'https://sheltered-depths-81656.herokuapp.com',
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
