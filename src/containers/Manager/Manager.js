@@ -135,24 +135,32 @@ class Manager extends Component {
 		// https://fgpstepanov.amocrm.ru/api/v2/leads?responsible_user_id=2502274&status[0]=20972836&status[1]=22210315&status[2]=20184184&status[3]=22210318
 		// делаем фильтр сделок по ключу 'created_at'
 		// считаем count
-
 		request({
-			url: 'https://fgpstepanov.amocrm.ru/private/api/auth.php',
-			method: 'POST',
+			url: 'http://localhost:3001',
+			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
 				'Access-Control-Allow-Origin': '*',
 				'Access-Control-Allow-Methods': 'GET, POST, PUT',
-				'Access-Control-Allow-Headers': 'Version, Authorization, Content-Type',
-				'Access-Control-Allow-Credentials': true,
-			},
-			data: {
-				USER_LOGIN: 'fgp.stepanov@yandex.ru',
-				USER_HASH: 'b59844aaa7ed1e42c43b5ff1e2a8747ee827a8c2'
 			},
 		}).then((res) => {
-			console.log(res, 'amooo')
-		})
+			const leads = res.response.leads
+			// console.log(leads, 'amooo')
+			const amoRecords = leads.filter((lead) => {
+				const m = lead.date_create
+				const n = moment(m)
+				debugger;
+				console.log(lead.status_id)
+				if (lead.status_id === '20972836' || lead.status_id === '22210315' || lead.status_id === '20184184' || lead.status_id === '22210318') {
+					console.log("HE[]")
+					return true
+				}
+
+				return false
+			})
+
+			console.log(amoRecords, 'amoRecords')
+		}).catch(err => console.log(err))
 	}
 
 	handleStaffChange = ({ target }) => {
