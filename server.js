@@ -8,7 +8,7 @@ const app = express();
 app.use(cors())
 
 app.get('/', function (req, res) {
-	// const data = JSON.stringify({
+	// const data = JSON.stringify({ 
 	// 	USER_LOGIN: 'fgp.stepanov@yandex.ru',
 	// 	USER_HASH: 'b59844aaa7ed1e42c43b5ff1e2a8747ee827a8c2'
 	// })
