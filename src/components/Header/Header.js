@@ -20,10 +20,10 @@ const Header = () => (
 						<Link className="link" to="/">Отчёт по возвращаемости</Link>
 					</li>
 					<li className="item">
-						<Link className="link" to="/manager">Отчёт по менеджерам</Link>
+						<Link className="link" to="/manager">Отчёт отдела продаж</Link>
 					</li>
 					<li className="item">
-						<Link className="link" to="/deposit">Отчет для маркетинга</Link>
+						<Link className="link" to="/deposit">Отчет отдела маркетинга</Link>
 					</li>
 					<li className="item">
 						<Link className="link" to="/products">Орг. Структура</Link>

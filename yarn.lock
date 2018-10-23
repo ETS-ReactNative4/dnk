@@ -116,6 +116,14 @@ alphanum-sort@^1.0.1, alphanum-sort@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/alphanum-sort/-/alphanum-sort-1.0.2.tgz#97a1119649b211ad33691d9f9f486a8ec9fbe0a3"
 
+amocrm-api@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/amocrm-api/-/amocrm-api-1.3.1.tgz#76f9a5633e8f0f412e6a805b9c82c670f5c0129f"
+  dependencies:
+    apiapi "^1.6.1"
+    axios "^0.7.0"
+    bluebird "^3.0.5"
+
 ansi-align@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ansi-align/-/ansi-align-2.0.0.tgz#c36aeccba563b89ceb556f3690f0b1d9e3547f7f"
@@ -165,6 +173,16 @@ anymatch@^2.0.0:
   dependencies:
     micromatch "^3.1.4"
     normalize-path "^2.1.1"
+
+apiapi@^1.6.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/apiapi/-/apiapi-1.7.1.tgz#47b99c408a3fff0b49603a76e21a8341bc8bf4d2"
+  dependencies:
+    axios "^0.7.0"
+    bluebird "^3.0.2"
+    debug "^2.2.0"
+    lodash "^3.10.1"
+    shitty-qs "^1.0.1"
 
 append-transform@^0.4.0:
   version "0.4.0"
@@ -358,6 +376,10 @@ aws-sign2@~0.7.0:
 aws4@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.8.0.tgz#f0e003d9ca9e7f59c7a508945d7b2ef9a04a542f"
+
+axios@^0.7.0:
+  version "0.7.0"
+  resolved "http://registry.npmjs.org/axios/-/axios-0.7.0.tgz#489c269044d5066dfa2c64c749cb131b176f4a7a"
 
 axobject-query@^0.1.0:
   version "0.1.0"
@@ -1043,7 +1065,7 @@ binary-extensions@^1.0.0:
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.12.0.tgz#c2d780f53d45bba8317a8902d4ceeaf3a6385b14"
 
-bluebird@^3.4.7:
+bluebird@^3.0.2, bluebird@^3.0.5, bluebird@^3.4.7:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.2.tgz#1be0908e054a751754549c270489c1505d4ab15a"
 
@@ -4217,6 +4239,10 @@ lodash.uniq@^4.5.0:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
+lodash@^3.10.1:
+  version "3.10.1"
+  resolved "http://registry.npmjs.org/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
+
 loglevel@^1.4.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.6.1.tgz#e0fc95133b6ef276cdc8887cdaf24aa6f156f8fa"
@@ -6110,6 +6136,10 @@ shell-quote@1.6.1:
 shellwords@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.1.tgz#d6b9181c1a48d397324c84871efbcfc73fc0654b"
+
+shitty-qs@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/shitty-qs/-/shitty-qs-1.0.1.tgz#7716a66937411e927315ed49c0fa05addf230386"
 
 signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.2"

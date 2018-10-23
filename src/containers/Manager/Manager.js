@@ -6,11 +6,22 @@ import Button from './../../components/Button'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 
+import marina from './images/Marina.jpeg'
+import laura from './images/Laura.jpeg'
 import 'react-datepicker/dist/react-datepicker.css';
 import styles from './Manager.css'
 
 require('moment/locale/ru');
 moment.locale('ru');
+
+const managersAvatar = {
+	3700335 : marina,
+	3972087 : laura,
+}
+
+// https://fgpstepanov.amocrm.ru/private/api/auth.php
+// USER_LOGIN fgp.stepanov@yandex.ru
+// USER_HASH b59844aaa7ed1e42c43b5ff1e2a8747ee827a8c2
 
 
 
@@ -43,15 +54,13 @@ const userID = '7a140112eded9ee20ba43f03406138cf'
 class Manager extends Component {
 	state = {
 		staffs: [],
-		choosenStaffID: 264106,
+		choosenManagerID: 3700335,
 		staffResult: null,
 		authData: {
-			login: null,
-			password: null
+			login: this.props.cookies.get('login') || null,
+			password: this.props.cookies.get('password') || null
 		},
 		password: null,
-		startDate: moment(),
-		endDate: moment(),
 		reportDate: moment(),
 		complete: false,
 	}
@@ -68,8 +77,8 @@ class Manager extends Component {
 			password = this.state.authData.password;
 		}
 
-		// this.props.cookies.set('login', login);
-		// this.props.cookies.set('password', passwor/d);
+		this.props.cookies.set('login', login);
+		this.props.cookies.set('password', password);
 
 		this.setState({
 			authData: {
@@ -87,37 +96,80 @@ class Manager extends Component {
 				data: this.state.authData,
 			}).then(() => {
 				request({
-					url: `https://api.yclients.com/api/v1/staff/${companyID}`,
+					url: `https://api.yclients.com/api/v1/company_users/${companyID}`,
 					method: 'GET',
 					headers: {
 						'Content-Type': 'application/json',
-						'Authorization': partnerID,
+						'Authorization': `Bearer ${partnerID}, User ${userID}`,
 					},
 					data: this.state.authData,
-				}).then((staffs) => {
+				}).then((allStaffs) => {
+					const staffs = allStaffs.filter(staff => {
+						return staff.id === 3700335 || staff.id === 3972087
+					})
+
 					this.setState({ staffs })
+
+
+					this.authAMO();
 				})
 			})
 		})
 	}
 
+	authAMO() {
+		// https://fgpstepanov.amocrm.ru/private/api/auth.php
+		// USER_LOGIN fgp.stepanov@yandex.ru
+		// USER_HASH b59844aaa7ed1e42c43b5ff1e2a8747ee827a8c2
+		// id 2502274 Елена
+
+
+		// GET https://fgpstepanov.amocrm.ru/api/v2/leads?responsible_user_id=2502274 — все сделки
+
+		// id цифровой воронке
+		// 20184184 — надо позвонить
+		// 20972836 — надо ответить
+		// 22210315 — целевые входящие
+		// 22210318 — нецелевые входящие
+
+		// https://fgpstepanov.amocrm.ru/api/v2/leads?responsible_user_id=2502274&status[0]=20972836&status[1]=22210315&status[2]=20184184&status[3]=22210318
+		// делаем фильтр сделок по ключу 'created_at'
+		// считаем count
+
+		request({
+			url: 'https://fgpstepanov.amocrm.ru/private/api/auth.php',
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Methods': 'GET, POST, PUT',
+				'Access-Control-Allow-Headers': 'Version, Authorization, Content-Type',
+				'Access-Control-Allow-Credentials': true,
+			},
+			data: {
+				USER_LOGIN: 'fgp.stepanov@yandex.ru',
+				USER_HASH: 'b59844aaa7ed1e42c43b5ff1e2a8747ee827a8c2'
+			},
+		}).then((res) => {
+			console.log(res, 'amooo')
+		})
+	}
+
 	handleStaffChange = ({ target }) => {
+		console.log(target, +target.value, 'target')
 		this.setState({
-			choosenStaffID: +target.value,
+			choosenManagerID: +target.value,
 			staffResult: null,
 		})
 	}
 
 	handleStaffSubmit = (e) => {
-		const { choosenStaffID, startDate, endDate, reportDate } = this.state
-		const requestStartDate = moment(startDate).format("YYYY-MM-DD")
-		const requestEndDate = moment(endDate).format("YYYY-MM-DD")
-
+		const { choosenManagerID, startDate, endDate, reportDate } = this.state
 
 		e.preventDefault()
-
+		console.log(reportDate, 'reportDate')
 		request({
-			url: `https://api.yclients.com/api/v1/records/${companyID}&staff_id=${choosenStaffID}&start_date=${requestStartDate}&end_date=${requestEndDate}&count=100000`,
+			url: `https://api.yclients.com/api/v1/records/${companyID}?created_user_id=${choosenManagerID}&c_start_date=${moment(reportDate).format('YYYY-MM-DD')}&c_end_date=${moment(reportDate).format('YYYY-MM-DD')}&count=100000`,
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -125,160 +177,23 @@ class Manager extends Component {
 			},
 			data: this.state.authData,
 		}).then(({ data: staffsClients }) => {
-			const allRecordsMobiles = []
-			const allRecords = []
-			const allMobiles = []
-			const attendantMobiles = []
-			const canceledMobiles = []
-			const notAttendantMobiles = []
-			const aimedClients = []
-			const aimedClientsMobiles = []
-			const attendant = []
-			const myArr = []
+
+			console.log(staffsClients, 'staffsClients')
+			let allRecordsByManager = staffsClients
 
 
-			// &staff_id=${choosenStaffID}
-			// Получаем вообще все записи = staffsClients
-			// Фильтруем на записи staffID
-			// Мапим записи StaffID
-			// Берем номер телефона и ищем повтор во всем списке (также фильтр по дате и то, что другой staffID)
-			//
-
-			// вообще все записи сотрудника
-			for (let i = 0; i < staffsClients.length; i++) {
-				if (staffsClients[i].attendance !== -1) {
-					allMobiles.push(staffsClients[i].client.phone)
-				} else if (staffsClients[i].client.phone !== "") {
-					notAttendantMobiles.push(staffsClients[i].client.phone)
-				}
-
-				allRecords.push(staffsClients[i])
-				allRecordsMobiles.push(staffsClients[i].client.phone)
-			}
-
-			// все кто пришел сотрудника
-			for (let j = 0; j < staffsClients.length; j++) {
-				if (staffsClients[j].attendance === 1 && staffsClients[j].client.phone !== "" && moment(reportDate) > moment(staffsClients[j].datetime)) {
-					attendant.push(staffsClients[j])
-					attendantMobiles.push(staffsClients[j].client.phone)
-				}
-
-				if (staffsClients[j].attendance === -1 && staffsClients[j].client.phone !== "" && moment(reportDate) > moment(staffsClients[j].datetime)) {
-					canceledMobiles.push(staffsClients[j].client.phone)
-				}
-			}
-
-
-
-
-			const delayedRequest = () => (
-				request({
-					url: `https://api.yclients.com/api/v1/records/${companyID}&start_date=${requestStartDate}&end_date=${requestEndDate}&count=100000`,
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-						'Authorization': `Bearer ${partnerID}, User ${userID}`,
-					},
-					data: this.state.authData,
-				})
-			)
-
-			async function processArray(array) {
-				await delayedRequest().then(( { data: allClients }) => {
-					console.log(allClients, 'allClients')
-					console.log(staffsClients, 'staffsClients')
-					console.log(attendant, 'attendant')
-
-					allClients.map(client => {
-						console.log(client.attendance !== -1, client.staff_id !== choosenStaffID, 'b', client.staff_id, choosenStaffID)
-						if (!aimedClientsMobiles.includes(client.client.phone) && client.attendance !== -1 && client.staff_id !== choosenStaffID && attendantMobiles.includes(client.client.phone)) {
-							aimedClientsMobiles.push(client.client.phone)
-							aimedClients.push(client)
-						}
-
-						if (attendantMobiles.includes(client.client.phone) && moment(client.datetime) > moment(reportDate) && client.staff_id === choosenStaffID) {
-							myArr.push(client)
-						}
-					})
-				})
-
-				console.log(myArr, 'myArr')
-				// for (const record of array) {
-				// 	await delayedRequest(record.client)
-				// }
-
-				attendant.filter(attendantClient => {
-					return aimedClients.filter(aimedClient => {
-						if (attendantClient.client.phone === aimedClient.client.phone && moment(attendantClient.datetime) < moment(aimedClient.datetime)) {
-							return true
-						}
-					})
-				})
-
-				return true
-			}
-
-			let complete = false
-			processArray(staffsClients).then(() => {
-				const returnsOfAttendant = allMobiles.filter(item => attendantMobiles.includes(item))
-
-				// все кто пришел сотрудника
-				// Вообще все записи сотрудника
-				// Из всех записей, мы берем только тех, кто приходил
-				// Получаем список
-
-				const uniqMobiles = new Set(returnsOfAttendant)
-				const returnMobiles = attendantMobiles.length - uniqMobiles.size
-				const uniqAttendantMobiles = new Set(attendantMobiles)
-
-				console.log(allRecords, 'allRecords все записи')
-				console.log(allMobiles, 'ВСЕ ЗАПИСИ')
-				console.log(attendantMobiles, 'attendantMobiles все кто пришел до сегодня') // нужно сделать до отчетного дня
-				console.log(uniqAttendantMobiles, 'все кто пришел до сегодня без дублей') // здесь нужно убрать те, что есть в
-				console.log(returnsOfAttendant, 'все кто пришел и их них записан до конца периода')
-				const arrayOfUniqMobiles = Array.from(uniqMobiles)
-				console.log(arrayOfUniqMobiles, 'все кто пришел и записан без дублей')
-				console.log(returnMobiles, 'returnMobiles все кто пришел и их них записан до конца периода —  все кто пришел и записан без дублей')
-				console.log(aimedClients, 'клиенты, которые были направлены на коллег')
-				console.log(myArr, 'возвращенные')
-
-				const arrayOfReturnMobiles = attendantMobiles.filter(item => {
-					// console.log(item, 'item', arrayOfUniqMobiles, 'arrayOfUniqMobiles', returnsOfAttendant, 'returnsOfAttendant')
-					if (!arrayOfUniqMobiles.includes(item)) {
-						return item
-					}
-				})
-
-				const percentOfReturns = (returnMobiles / uniqAttendantMobiles.size) * 100
-
-
-				const futureMobiles = allMobiles.length - attendantMobiles.length
-
-				this.setState({
-					staffResult: {
-						allRecordsMobiles, // вообще все записи
-						allMobiles, // все записи на весь срок, кроме не пришедших
-						futureMobiles, // записи на будущие даты
-						canceledMobiles, // отказники
-						attendantMobiles, // все кто пришел до отчетного дня
-						notAttendantMobiles, // все кто не пришел до отчетного дня
-						returnsOfAttendant, // все кто записался до конца периода из тех кто пришел
-						aimedClients, // направленные на других
-						uniqMobiles,
-						returnMobiles,
-						percentOfReturns,
-						myArr,
-					},
-				})
+			this.setState({
+				staffResult: {
+					allRecordsByManager,
+				},
 			})
 		})
 	}
 
 	getStaff() {
-		const { staffs, choosenStaffID } = this.state
-
+		const { staffs, choosenManagerID } = this.state
 		for (let i = 0; i < staffs.length; i++) {
-			if (choosenStaffID === staffs[i].id) {
+			if (choosenManagerID === staffs[i].id) {
 				return staffs[i]
 			}
 		}
@@ -310,7 +225,7 @@ class Manager extends Component {
 			return (
 				<article className="docs">
 					<h1 className="heading">
-						Отчёт по Менеджерам
+						Отчёт Отдела Продаж
 					</h1>
 					{staffs && <div className="block">
 						<form onSubmit={this.handleStaffSubmit}>
@@ -318,34 +233,13 @@ class Manager extends Component {
 
 							<select onChange={this.handleStaffChange} className="select">
 								{staffs.map((staff, id) => (
-									<option value={staff.id}>{staff.name}</option>
+									<option value={staff.id}>{staff.firstname}</option>
 								))}
 							</select>
 
 							<div className="dateField">
 								<div className="date">
-									<p className="dateNotes">Период:</p>
-									<DatePicker
-										selected={this.state.startDate}
-										selectsStart
-										startDate={this.state.startDate}
-										endDate={this.state.endDate}
-										onChange={this.handleDatapickerStart}
-									/>
-									<p className="divider">—</p>
-									<DatePicker
-										selected={this.state.endDate}
-										selectsEnd
-										startDate={this.state.startDate}
-										endDate={this.state.endDate}
-										onChange={this.handleDatapickerEnd}
-									/>
-								</div>
-							</div>
-
-							<div className="dateField">
-								<div className="date">
-									<p className="dateNotes">Отчетный день:</p>
+									<p className="dateNotes">Выберите день:</p>
 									<DatePicker
 										selected={this.state.reportDate}
 										startDate={this.state.reportDate}
@@ -365,9 +259,9 @@ class Manager extends Component {
 								<div className="service">
 									<h2 className="heading">Результат</h2>
 
-									<img className="avatar" src={this.getStaff().avatar_big} alt={this.getStaff()}/>
+									<img className="avatar" src={managersAvatar[this.getStaff().id]} alt={this.getStaff()}/>
 									<p className="staffName">{this.getStaff().name}</p>
-									<div className="period">{moment(this.state.startDate).format("DD MMMM")} — {moment(this.state.endDate).format("DD MMMM")}</div>
+									<div className="period">Дата: {moment(this.state.reportDate).format("DD MMMM")}</div>
 
 
 									<div className="row">
@@ -381,62 +275,29 @@ class Manager extends Component {
 									</div>
 
 									<div className="row">
-										<span className="name">Записи на будущие даты:</span>
+										<span className="name">Все записи:</span>
 										<div className="value">
-											<span>{staffResult.futureMobiles}</span>
+											<span>{staffResult.allRecordsByManager.length}</span>
 										</div>
 										<div className="value">
-											<span>{(staffResult.futureMobiles / staffResult.attendantMobiles.length * 100).toFixed(0)}%</span>
+											<span>{(staffResult.allRecordsByManager.length * 100).toFixed(0)}%</span>
 										</div>
 									</div>
 
 									<div className="row">
 										<span className="name">Клиенты, которых обслужили:</span>
 										<div className="value">
-											<span>{staffResult.attendantMobiles.length}</span>
+											<span>{staffResult.allRecordsByManager.length}</span>
 										</div>
 
 										<div className="value">
 											<span>100%</span>
 										</div>
 									</div>
-
-									<div className="row">
-										<span className="name">Клиенты, которые отменились:</span>
-										<div className="value">
-											<span>{staffResult.canceledMobiles.length}</span>
-										</div>
-
-										<div className="value">
-											<span>{(staffResult.canceledMobiles.length / staffResult.allRecordsMobiles.length * 100).toFixed(0)}%</span>
-										</div>
-									</div>
-
-									<div className="row">
-										<span className="name">Клиенты, которых направили к коллегам:</span>
-										<div className="value">
-											<span>{staffResult.aimedClients.length}</span>
-										</div>
-
-										<div className="value">
-											<span>{(staffResult.aimedClients.length / staffResult.attendantMobiles.length * 100).toFixed(0)}%</span>
-										</div>
-									</div>
-
-									<div className="row">
-										<span className="name">Повторные записи (Возвращаемость):</span>
-										<div className="value">
-											<span>{staffResult.myArr.length}</span>
-										</div>
-										<div className="value">
-											<span>{((staffResult.myArr.length / staffResult.attendantMobiles.length) * 100).toFixed(1)}%</span>
-										</div>
-									</div>
 								</div>
 							</div>
 						</div>
 					}
-
 				</article>
 			)
 		}
@@ -444,7 +305,7 @@ class Manager extends Component {
 		return (
 			<article className="docs">
 				<h1 className="heading">
-					Пожалуйста подddождите
+					Пожалуйста подождите
 				</h1>
 			</article>
 		)
@@ -453,4 +314,4 @@ class Manager extends Component {
 
 // {note && <Note {...note}/>}
 
-export default Manager
+export default withCookies(Manager)
