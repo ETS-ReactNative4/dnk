@@ -7,6 +7,8 @@ const app = express();
 
 app.use(cors())
 
+const port = process.env.PORT || 8000
+
 app.get('/', function (req, res) {
 	// const data = JSON.stringify({
 	// 	USER_LOGIN: 'fgp.stepanov@yandex.ru',
@@ -56,6 +58,6 @@ app.get('/', function (req, res) {
 });
 
 
-app.listen(8000, function () {
-	console.log('Example app listening on port 8000!');
+app.listen(port, function () {
+	console.log('Example app listening on port' + port);
 });
