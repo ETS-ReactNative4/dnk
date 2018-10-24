@@ -14,6 +14,8 @@ import styles from './Manager.css'
 require('moment/locale/ru');
 moment.locale('ru');
 
+const port = process.env.PORT || 8000
+
 const managersAvatar = {
 	3700335 : marina,
 	3972087 : laura,
@@ -66,6 +68,7 @@ class Manager extends Component {
 	}
 
 	componentDidMount() {
+		this.authAMO();
 		let login;
 		let password;
 
@@ -109,9 +112,6 @@ class Manager extends Component {
 					})
 
 					this.setState({ staffs })
-
-
-					this.authAMO();
 				})
 			})
 		})
@@ -136,7 +136,7 @@ class Manager extends Component {
 		// делаем фильтр сделок по ключу 'created_at'
 		// считаем count
 		request({
-			url: 'https://sheltered-depths-81656.herokuapp.com',
+			url: `http://localhost:${port}`,
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -144,12 +144,10 @@ class Manager extends Component {
 				'Access-Control-Allow-Methods': 'GET, POST, PUT',
 			},
 		}).then((res) => {
+			console.log(res, 'amooo')
 			const leads = res.response.leads
-			// console.log(leads, 'amooo')
 			const amoRecords = leads.filter((lead) => {
-				const m = lead.date_create
-				const n = moment(m)
-				debugger;
+
 				console.log(lead.status_id)
 				if (lead.status_id === '20972836' || lead.status_id === '22210315' || lead.status_id === '20184184' || lead.status_id === '22210318') {
 					console.log("HE[]")
