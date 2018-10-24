@@ -6,6 +6,7 @@ const AmoCRM = require('amocrm-api');
 const amo = new AmoCRM('https://fgpstepanov.amocrm.ru');
 const app = express();
 
+app.use(cors())
 
 const port = process.env.PORT || 8000
 
