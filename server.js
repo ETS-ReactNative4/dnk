@@ -49,7 +49,7 @@ app.get('/', function (req, res) {
 	}).then(function createSomeTasks () {
 		axios({
 			method: 'get',
-			url: 'https://fgpstepanov.amocrm.ru/api/v2/leads?responsible_user_id=2502274&status[0]=20972836&status[1]=22210315&status[2]=20184184&status[3]=22210318',
+			url: 'https://cors-anywhere.herokuapp.com/fgpstepanov.amocrm.ru/api/v2/leads?responsible_user_id=2502274',
 		}).then((data) => {
 			console.log(req.query.manager_id)
 			res.send(JSON.stringify(data));
