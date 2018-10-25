@@ -65,10 +65,10 @@ class Manager extends Component {
 		password: null,
 		reportDate: moment(),
 		complete: false,
+		amoRecords: [],
 	}
 
 	componentDidMount() {
-		this.authAMO();
 		let login;
 		let password;
 
@@ -136,7 +136,7 @@ class Manager extends Component {
 		// делаем фильтр сделок по ключу 'created_at'
 		// считаем count
 		request({
-			url: `http://localhost:${port}`,
+			url: `http://localhost:${port}?from=${moment(this.state.reportDate).startOf('day').unix()}&to=${moment(this.state.reportDate).add(2, 'day').startOf('day').unix()}`,
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -144,20 +144,11 @@ class Manager extends Component {
 				'Access-Control-Allow-Methods': 'GET, POST, PUT',
 			},
 		}).then((res) => {
-			console.log(res, 'amooo')
-			const leads = res.response.leads
-			const amoRecords = leads.filter((lead) => {
-
-				console.log(lead.status_id)
-				if (lead.status_id === '20972836' || lead.status_id === '22210315' || lead.status_id === '20184184' || lead.status_id === '22210318') {
-					console.log("HE[]")
-					return true
-				}
-
-				return false
+			const leads = res._embedded.items
+			console.log(leads, 'amooo')
+			this.setState({
+				amoRecords: leads,
 			})
-
-			console.log(amoRecords, 'amoRecords')
 		}).catch(err => console.log(err))
 	}
 
@@ -183,7 +174,7 @@ class Manager extends Component {
 			},
 			data: this.state.authData,
 		}).then(({ data: staffsClients }) => {
-
+			this.authAMO();
 			console.log(staffsClients, 'staffsClients')
 			let allRecordsByManager = staffsClients
 
@@ -266,17 +257,29 @@ class Manager extends Component {
 									<h2 className="heading">Результат</h2>
 
 									<img className="avatar" src={managersAvatar[this.getStaff().id]} alt={this.getStaff()}/>
-									<p className="staffName">{this.getStaff().name}</p>
+									<p className="staffName">{this.getStaff().firstname}</p>
 									<div className="period">Дата: {moment(this.state.reportDate).format("DD MMMM")}</div>
 
 
 									<div className="row">
 										<span className="name">Показатель</span>
 										<div className="value">
-											<span>Кол-во записей</span>
+											<span>Количество</span>
 										</div>
 										<div className="value">
 											<span>Процент</span>
+										</div>
+									</div>
+
+
+									<div className="row">
+										<span className="name">Все обращения:</span>
+										<div className="value">
+											<span>{this.state.amoRecords.length}</span>
+										</div>
+
+										<div className="value">
+											<span>100%</span>
 										</div>
 									</div>
 
@@ -286,18 +289,7 @@ class Manager extends Component {
 											<span>{staffResult.allRecordsByManager.length}</span>
 										</div>
 										<div className="value">
-											<span>{(staffResult.allRecordsByManager.length * 100).toFixed(0)}%</span>
-										</div>
-									</div>
-
-									<div className="row">
-										<span className="name">Клиенты, которых обслужили:</span>
-										<div className="value">
-											<span>{staffResult.allRecordsByManager.length}</span>
-										</div>
-
-										<div className="value">
-											<span>100%</span>
+											<span>{(staffResult.allRecordsByManager.length / this.state.amoRecords.length * 100).toFixed(0)}%</span>
 										</div>
 									</div>
 								</div>
