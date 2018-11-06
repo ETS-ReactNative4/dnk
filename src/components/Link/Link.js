@@ -17,7 +17,7 @@ type LinkPropsType = {
 const MyLink = ({ className, href, to, children }: LinkPropsType) => {
 	if (to) {
 		return (
-			<Link className="link" to={to}>{children}</Link>
+			<Link className={cx('link', className)} to={to}>{children}</Link>
 		)
 	}
 

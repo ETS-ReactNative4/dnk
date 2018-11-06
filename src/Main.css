@@ -4,6 +4,60 @@
 	text-align: center;
 }
 
+.main_auth {
+	position: absolute;
+	top: 0;
+	display: flex;
+	width: 100%;
+	z-index: 100;
+	visibility: hidden;
+	transition: .3s;
+}
+
+.main_auth.visible {
+	visibility: visible;
+}
+
+.main_auth::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: white;
+	z-index: 100;
+}
+
+.main_authForm {
+	padding: 20px 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	width: 800px;
+	z-index: 150;
+	margin: 0 auto;
+}
+
+.auth_label {
+	font-size: 30px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	margin-bottom: 20px;
+}
+
+.auth_text {
+	margin: 0;
+}
+
+.auth_button {
+	margin: 0 !important;
+}
+
 .heading {
 	margin: 0;
 	margin-bottom: 70px;
@@ -58,13 +112,16 @@
 
 .staffButton {
 	border-radius: 5px;
-	background-color: #d1d1d1;
+	background-color: transparent !important;
 	border: solid 1px #d1d1d1;
+	margin-left: 0 !important;
+	margin-top: 15px;
+	transition: .3s;
 }
 
 .staffButton:hover {
-	background-color: #323338;
-	color: #fff;
+	background-color: #fff !important;
+	color: #000 !important;
 }
 
 .staff {
@@ -92,6 +149,45 @@
 	height: auto;
 	border-radius: 50%;
 }
+
+.main {
+	display: flex;
+	height: calc(100% - 85px);
+}
+
+.main_link {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-image: url('./cosmetology.jpg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	position: relative;
+	cursor: pointer;
+}
+
+.main_link::before {
+	content: '';
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: #60c3ff;
+	opacity: .3;
+	transition: .3s;
+}
+
+.main_link:hover.main_link::before {
+	opacity: .7;
+}
+
+.main_heading {
+	z-index: 10;
+	font-size: 40px;
+	color: #fff;
+}
+
 
 @media (max-width: 1024px) {
 	.docs {
@@ -182,6 +278,10 @@
 
 
 @media (max-width: 800px) {
+	.main_heading {
+		text-align: center;
+	}
+
 	.row .name {
 		width: 60%;
 	}

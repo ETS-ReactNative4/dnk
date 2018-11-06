@@ -1,0 +1,56 @@
+.services {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.service {
+	max-width: 400px;
+	padding-bottom: 64px;
+	border-bottom: 1px solid #e8e8e8;
+	margin: 64px auto 0;
+
+	.service:last-of-type {
+		border: 0;
+	}
+}
+
+.row {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 35px;
+	font-size: 18px;
+	line-height: 1.33;
+
+	.row:last-of-type {
+		margin: 0;
+	}
+}
+
+.heading {
+	margin: 0 0 30px;
+}
+
+.name {
+	margin-right: 20px;
+}
+
+.value {
+	display: flex;
+	flex-direction: column;
+	font-weight: 600;
+	text-align: right;
+}
+
+.note {
+	font-size: 14px;
+	font-weight: normal;
+	letter-spacing: -0.3px;
+	line-height: 1.71;
+}
+
+@media (max-width: 800px) {
+	.row .name {
+		width: 60%;
+	}
+}

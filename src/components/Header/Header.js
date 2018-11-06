@@ -9,15 +9,15 @@ import logo from './images/logo.png'
 
 const Header = () => (
 	<header className="header">
-		<a className="logo" target="_blank" rel="noopener noreferrer" href="https://dnkclinic.ru">
+		<Link className="logo" to="/">
 			<img src={logo} alt="DNK Beauty"/>
-		</a>
+		</Link>
 
 		{!isMobile &&
 			<nav>
 				<ul className="list">
 					<li className="item">
-						<Link className="link" to="/">Отчёт по возвращаемости</Link>
+						<Link className="link" to="/cosmetology">Отчёт по возвращаемости</Link>
 					</li>
 					<li className="item">
 						<Link className="link" to="/manager">Отчёт отдела продаж</Link>
@@ -26,7 +26,7 @@ const Header = () => (
 						<Link className="link" to="/deposit">Отчет отдела маркетинга</Link>
 					</li>
 					<li className="item">
-						<Link className="link" to="/products">Орг. Структура</Link>
+						<Link className="link" to="/structure">Орг. Структура</Link>
 					</li>
 				</ul>
 			</nav>

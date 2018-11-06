@@ -2,6 +2,7 @@
 import React, { Component } from 'react'
 import { withCookies, Cookies } from 'react-cookie';
 
+import Tariff from './../../components/Tariff'
 import Button from './../../components/Button'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
@@ -20,11 +21,6 @@ const managersAvatar = {
 	3700335 : marina,
 	3972087 : laura,
 }
-
-// https://fgpstepanov.amocrm.ru/private/api/auth.php
-// USER_LOGIN fgp.stepanov@yandex.ru
-// USER_HASH b59844aaa7ed1e42c43b5ff1e2a8747ee827a8c2
-
 
 
 const request = async ({url, method = 'GET', data, headers = {}} /* : RequestType */) /* : Promise<Object> */ => {
@@ -66,6 +62,9 @@ class Manager extends Component {
 		reportDate: moment(),
 		complete: false,
 		amoRecords: [],
+		amoMobileRecords: [],
+		amoTextRecords: [],
+		isLoading: false,
 	}
 
 	componentDidMount() {
@@ -145,15 +144,19 @@ class Manager extends Component {
 			},
 		}).then((res) => {
 			const leads = res._embedded.items
-			console.log(leads, 'amooo')
+			const amoMobileRecords = leads.filter(lead => lead.status_id !== 20972836)
+			const amoTextRecords = leads.filter(lead => lead.status_id === 20972836)
+
+			console.log(res._embedded.items, 'leads')
 			this.setState({
 				amoRecords: leads,
+				amoMobileRecords,
+				amoTextRecords,
 			})
 		}).catch(err => console.log(err))
 	}
 
 	handleStaffChange = ({ target }) => {
-		console.log(target, +target.value, 'target')
 		this.setState({
 			choosenManagerID: +target.value,
 			staffResult: null,
@@ -161,10 +164,12 @@ class Manager extends Component {
 	}
 
 	handleStaffSubmit = (e) => {
-		const { choosenManagerID, startDate, endDate, reportDate } = this.state
+		const { choosenManagerID, reportDate } = this.state
 
 		e.preventDefault()
-		console.log(reportDate, 'reportDate')
+
+		this.setState({isLoading: true})
+
 		request({
 			url: `https://api.yclients.com/api/v1/records/${companyID}?created_user_id=${choosenManagerID}&c_start_date=${moment(reportDate).format('YYYY-MM-DD')}&c_end_date=${moment(reportDate).format('YYYY-MM-DD')}&count=100000`,
 			method: 'GET',
@@ -175,14 +180,27 @@ class Manager extends Component {
 			data: this.state.authData,
 		}).then(({ data: staffsClients }) => {
 			this.authAMO();
-			console.log(staffsClients, 'staffsClients')
+			console.log(staffsClients, 'YClients Data')
 			let allRecordsByManager = staffsClients
+
+			const allTextRecordsByManager = staffsClients.filter(client => {
+				if (client.comment === '@w_1' || client.comment === '@w_2' || client.comment === '@i_1' || client.comment === '@i_2') {
+					return true
+				}
+			})
+			const allMobileRecordsByManager = staffsClients.filter(client => !allTextRecordsByManager.includes(client))
+
+			console.log(allTextRecordsByManager, 'YCLIENTS allTextRecordsByManager');
+			console.log(allMobileRecordsByManager, 'YCLIENTS allMobileRecordsByManager');
 
 
 			this.setState({
 				staffResult: {
 					allRecordsByManager,
+					allMobileRecordsByManager,
+					allTextRecordsByManager
 				},
+				isLoading: false,
 			})
 		})
 	}
@@ -217,46 +235,58 @@ class Manager extends Component {
 
 	render() {
 		const { staffs, staffResult } = this.state
+		const tariff = {
+			title: "Отчёт Отдела Продаж",
+			name: "space",
+			description: "Статистика важнейших показателей по каждому менеджеру",
+			cost: "важно",
+		}
 
 		if (this.state.authData.password) {
 			return (
 				<article className="docs">
-					<h1 className="heading">
-						Отчёт Отдела Продаж
-					</h1>
-					{staffs && <div className="block">
-						<form onSubmit={this.handleStaffSubmit}>
-							<label className="label">Выберите сотрудника:</label>
+					<Tariff name="space" tariff={tariff}>
+						{staffs && <div className="block">
+							<form onSubmit={this.handleStaffSubmit}>
+								<label className="label">Выберите сотрудника:</label>
 
-							<select onChange={this.handleStaffChange} className="select">
-								{staffs.map((staff, id) => (
-									<option value={staff.id}>{staff.firstname}</option>
-								))}
-							</select>
+								<select onChange={this.handleStaffChange} className="select">
+									{staffs.map((staff, id) => (
+										<option value={staff.id}>{staff.firstname}</option>
+									))}
+								</select>
 
-							<div className="dateField">
-								<div className="date">
-									<p className="dateNotes">Выберите день:</p>
-									<DatePicker
-										selected={this.state.reportDate}
-										startDate={this.state.reportDate}
-										onChange={this.handleDatapickerReport}
-									/>
+								<div className="dateField">
+									<div className="date">
+										<p className="dateNotes">Выберите день:</p>
+										<DatePicker
+											selected={this.state.reportDate}
+											startDate={this.state.reportDate}
+											onChange={this.handleDatapickerReport}
+										/>
+									</div>
 								</div>
+
+								<Button type="submit" className="manager_staffButton">
+									Подтвердить выбор
+								</Button>
+							</form>
+						</div>
+						}
+					</Tariff>
+
+				{this.state.isLoading && <span className="loader" />}
+
+				{staffResult &&
+					<div className="block">
+						<div className="service">
+						<div className="result">
+							<div className="result_tariffHeader">
+								<img className="avatar" src={managersAvatar[this.getStaff().id]} alt={this.getStaff()}/>
 							</div>
-
-							<Button type="submit" className="staffButton">Подтвердить выбор</Button>
-						</form>
-					</div>
-					}
-
-					{staffResult &&
-						<div className="block">
-							<div className="service">
+							<div className="result_tariffBody">
 								<div className="service">
-									<h2 className="heading">Результат</h2>
 
-									<img className="avatar" src={managersAvatar[this.getStaff().id]} alt={this.getStaff()}/>
 									<p className="staffName">{this.getStaff().firstname}</p>
 									<div className="period">Дата: {moment(this.state.reportDate).format("DD MMMM")}</div>
 
@@ -271,6 +301,50 @@ class Manager extends Component {
 										</div>
 									</div>
 
+
+									<div className="row">
+										<span className="name">Количество обращений по звонкам:</span>
+										<div className="value">
+											<span>{this.state.amoMobileRecords.length}</span>
+										</div>
+
+										<div className="value">
+											<span>100%</span>
+										</div>
+									</div>
+
+									<div className="row">
+										<span className="name">Количество записей по звонкам:</span>
+										<div className="value">
+											<span>{staffResult.allMobileRecordsByManager.length}</span>
+										</div>
+
+										<div className="value">
+											<span>{(staffResult.allMobileRecordsByManager.length / this.state.amoMobileRecords.length * 100).toFixed(0)}%</span>
+										</div>
+									</div>
+
+									<div className="row">
+										<span className="name">Количество обращений по сообщениям:</span>
+										<div className="value">
+											<span>{this.state.amoTextRecords.length}</span>
+										</div>
+
+										<div className="value">
+											<span>100%</span>
+										</div>
+									</div>
+
+									<div className="row">
+										<span className="name">Количество записей по сообщениям:</span>
+										<div className="value">
+											<span>{staffResult.allTextRecordsByManager.length}</span>
+										</div>
+
+										<div className="value">
+											<span>{(staffResult.allTextRecordsByManager.length / this.state.amoTextRecords.length * 100).toFixed(0)}%</span>
+										</div>
+									</div>
 
 									<div className="row">
 										<span className="name">Все обращения:</span>
@@ -295,7 +369,9 @@ class Manager extends Component {
 								</div>
 							</div>
 						</div>
-					}
+					</div>
+				</div>
+				}
 				</article>
 			)
 		}
