@@ -1,5 +1,6 @@
 /* @flow */
 import React, { type Node } from 'react'
+import { Link } from 'react-router-dom'
 
 import classnames from 'classnames/bind'
 import styles from './Link.css'
@@ -13,7 +14,12 @@ type LinkPropsType = {
 	children: Node,
 }
 
-const Link = ({ className, href, to, children }: LinkPropsType) => {
+const MyLink = ({ className, href, to, children }: LinkPropsType) => {
+	if (to) {
+		return (
+			<Link className={cx('link', className)} to={to}>{children}</Link>
+		)
+	}
 
 	return (
 		<a
@@ -27,4 +33,4 @@ const Link = ({ className, href, to, children }: LinkPropsType) => {
 	)
 }
 
-export default Link
+export default MyLink

@@ -1,0 +1,403 @@
+.docs {
+	max-width: 1420px;
+	margin: 100px auto 64px;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	flex-direction: column;
+	align-content: center;
+	align-items: center;
+}
+
+form {
+	width: 100%;
+}
+
+.heading {
+	margin: 0;
+	margin-bottom: 70px;
+	font-size: 56px;
+	letter-spacing: -2.4px;
+	line-height: 1;
+}
+
+.subheading {
+	margin-top: 100px;
+}
+
+.block {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	text-align: left;
+	margin-top: 50px;
+}
+
+.select,
+.staffButton {
+	margin-left: 20px;
+}
+
+.select {
+	background: #fff !important;
+	border: none;
+	border: 1px solid white;
+	border-radius: 5px;
+	padding: 5px;
+	font-size: 16px;
+	color: #000 !important;
+}
+
+.label,
+.date {
+	font-size: 29px;
+	font-weight: bold;
+	line-height: 2.57;
+}
+
+.date {
+	display: flex;
+}
+
+.dateNotes {
+	margin: 4px 25px 0 0;
+}
+
+.divider {
+	margin: 0 10px;
+}
+
+.manager_staffButton {
+	border-radius: 5px;
+	background-color: transparent !important;
+	border: solid 1px #d1d1d1;
+	margin-left: 0 !important;
+	margin-top: 15px;
+	transition: .3s;
+}
+
+.manager_staffButton:hover {
+	background-color: #fff !important;
+	color: #000;
+}
+
+.staff {
+	width: 20%;
+	margin-bottom: 50px;
+	cursor: pointer;
+}
+
+.staff + .staff {
+	margin-right: 20px;
+
+}
+
+.content {
+	max-width: 660px;
+	margin: 0;
+	font-size: 18px;
+	line-height: 24px;
+	text-align: justify;
+}
+
+.avatar {
+	border-radius: 50%;
+	width: 280px;
+	height: 320px;
+	box-shadow: 1.3px 5.8px 32px 0 rgba(0, 0, 0, 0.17);
+}
+
+@media (max-width: 1024px) {
+	.docs {
+		max-width: 90%;
+	}
+
+	.content {
+		max-width: none;
+	}
+
+	.heading {
+		margin-bottom: 20px;
+	}
+}
+
+.services {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.service {
+	text-align: center;
+	width: 100%;
+	max-width: 720px;
+	padding-bottom: 64px;
+	border-bottom: 1px solid #e8e8e8;
+	margin-top: 180px;
+	padding: 0;
+}
+
+.service:last-of-type {
+	border: 0;
+}
+
+.row {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 35px;
+	font-size: 18px;
+	line-height: 1.33;
+	border-bottom: 1px solid #000;
+	align-items: center;
+}
+
+.row:last-of-type {
+	margin: 0;
+	border-bottom: none;
+}
+
+.name {
+	margin-right: 20px;
+	text-align: left;
+	width: 70%;
+	padding-left: 20px;
+}
+
+.staffName {
+	margin: 25px 0 15px;
+	font-size: 24px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.period {
+	color: #6c96f9;
+	border: 1px solid #6c96f9;
+	border-radius: 5px;
+	text-align: center;
+	font-size: 18px;
+	letter-spacing: -0.4px;
+	padding: 5px;
+	max-width: 250px;
+	margin: 0 auto 40px;
+}
+
+.value {
+	display: flex;
+	flex-direction: column;
+	font-weight: 600;
+	text-align: right;
+	width: 35%;
+	text-align: center;
+}
+
+.note {
+	font-size: 14px;
+	font-weight: normal;
+	letter-spacing: -0.3px;
+	line-height: 1.71;
+}
+
+
+.loader {
+	margin-top: 50px;
+	transform: translate(-50%, -50%);
+	display: block;
+
+	height: 100px;
+	width: 100px;
+
+	border-radius: 50%;
+	border: 6px solid transparent;
+	border-top-color: #79a4d4;
+	border-radius: 50%;
+
+	animation: rotate 1s linear infinite;
+}
+/*
+.loader::after {
+	content: '';
+	position: absolute;
+	top: -6px;
+	left: -6px;
+
+	width: 100px;
+	height: 100px;
+
+
+} */
+
+@keyframes rotate {
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media (max-width: 800px) {
+	.docs {
+		margin-top: 30px;
+	}
+
+	.companyField {
+		margin-bottom: 30px;
+	}
+
+	.row .name {
+		width: 60%;
+	}
+}
+
+.result {
+	position: relative;
+	width: 640px;
+}
+
+.result_tariffHeader {
+	padding: 40px 0 0;
+	width: 100%;
+	height: 150px;
+	border-top-left-radius: 20px;
+	border-top-right-radius: 20px;
+	background-image: linear-gradient(to top, #f8c88c, #e66f49);
+}
+
+.result_tariffBody {
+	position: relative;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	border: 1px solid #121212;
+
+	border-top-color: rgb(18, 18, 18);
+	border-top-style: solid;
+	border-top-width: 1px;
+	border-bottom-left-radius: 20px;
+	border-bottom-right-radius: 20px;
+
+	border-top: none;
+}
+
+.result_card {
+	width: 100%;
+
+	border-radius: 20px;
+	box-shadow: 0 15px 32px 0 rgba(0, 0, 0, 0.22);
+}
+
+
+@media (max-width: 800px) {
+	/* desktop */
+	.result_download {
+		margin: 20px 0 0;
+	}
+
+	.label,
+	.date {
+		line-height: 1;
+	}
+
+	.date {
+		flex-direction: column;
+	}
+
+	.select {
+		margin-left: 0;
+		margin-top: 10px;
+		width: 100%;
+	}
+
+	.dateField {
+		margin-top: 30px;
+	}
+
+	.result {
+		width: 100%;
+	}
+
+	.result_tariffBody {
+		padding: 0;
+	}
+
+	.staffButton {
+		padding: 12px 20px;
+		margin-top: 25px;
+	}
+
+	.result_button {
+		padding: 16px;
+		border: solid 1px #d1d1d1;
+		color: #8e8e8e;
+		font-size: 16px;
+		font-weight: 600;
+		letter-spacing: -0.6px;
+		line-height: 1.5;
+	}
+
+	.result_button.active {
+		background-color: #323338;
+		color: #fff;
+	}
+
+	/* common */
+	.result_heading {
+		margin: 0;
+		margin-top: 20px;
+		font-size: 36px;
+		font-weight: bold;
+		letter-spacing: -1.4px;
+		line-height: 1;
+	}
+
+	.result_description {
+		margin: 0;
+		margin-top: 5px;
+		font-size: 18px;
+		letter-spacing: -0.2px;
+		line-height: 1.5;
+	}
+
+	.result_actions {
+		flex-direction: column;
+	}
+
+	.result_actionsMobile {
+
+		width: 100%;
+		flex-direction: row;
+		margin: 40px 0 0;
+	}
+
+	.service {
+		margin-top: 40px;
+	}
+
+	.avatar {
+		width: 180px;
+		height: 200px;
+	}
+
+	.name {
+		margin: 0;
+		padding-left: 10px;
+	}
+
+	.row {
+		margin-bottom: 12px;
+	}
+
+	.period {
+		margin-bottom: 20px;
+	}
+}
+
+@media (max-width: 360px) {
+	.button:last-of-type {
+		margin-top: 20px;
+	}
+}
