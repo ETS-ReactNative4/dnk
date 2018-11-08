@@ -238,6 +238,14 @@ form {
 }
 
 @media (max-width: 800px) {
+	.docs {
+		margin-top: 30px;
+	}
+
+	.companyField {
+		margin-bottom: 30px;
+	}
+
 	.row .name {
 		width: 60%;
 	}
@@ -308,9 +316,12 @@ form {
 		margin-top: 30px;
 	}
 
-	/* mobile */
+	.result {
+		width: 100%;
+	}
+
 	.result_tariffBody {
-		padding: 20px;
+		padding: 0;
 	}
 
 	.staffButton {
@@ -360,6 +371,28 @@ form {
 		width: 100%;
 		flex-direction: row;
 		margin: 40px 0 0;
+	}
+
+	.service {
+		margin-top: 40px;
+	}
+
+	.avatar {
+		width: 180px;
+		height: 200px;
+	}
+
+	.name {
+		margin: 0;
+		padding-left: 10px;
+	}
+
+	.row {
+		margin-bottom: 12px;
+	}
+
+	.period {
+		margin-bottom: 20px;
 	}
 }
 

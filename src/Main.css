@@ -280,6 +280,7 @@
 @media (max-width: 800px) {
 	.main_heading {
 		text-align: center;
+		font-size: 26px;
 	}
 
 	.row .name {

@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts' // Expects that Highcharts was loaded in the code.
-import styles from './Chart.css'
-
-const cx = classnames.bind(styles)
+import './Chart.css'
 
 const config = {
 	/* HighchartsConfig */
@@ -10,15 +8,15 @@ const config = {
 
 class Chart extends Component {
 	componentDidMount() {
-		let chart = this.refs.chart.getChart();
-		chart.series[0].addPoint({x: 10, y: 12});
+		// let chart = this.refs.chart.getChart();
+		// chart.series[0].addPoint({x: 10, y: 12});
 	}
 
 	render() {
 		return (
-			<ReactHighcharts config={config} ref="chart"></ReactHighcharts>;
+			<ReactHighcharts config={config} ref="chart"></ReactHighcharts>
 		)
 	}
-)
+}
 
 export default Chart

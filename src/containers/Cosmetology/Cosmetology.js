@@ -4,7 +4,6 @@ import { withCookies, Cookies } from 'react-cookie';
 
 import Tariff from './../../components/Tariff'
 import Button from './../../components/Button'
-import Chart from './../../components/Chart'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 
@@ -12,8 +11,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 require('moment/locale/ru');
 moment.locale('ru');
-
-
 
 const request = async ({url, method = 'GET', data, headers = {}} /* : RequestType */) /* : Promise<Object> */ => {
 	try {
@@ -37,14 +34,14 @@ const request = async ({url, method = 'GET', data, headers = {}} /* : RequestTyp
 	}
 }
 
-const companyID = 114454
 const partnerID = 'hu2x584xzw7y7fy34bg5'
 const userID = '7a140112eded9ee20ba43f03406138cf'
 
 class Cosmetology extends Component {
 	state = {
 		staffs: [],
-		choosenStaffID: 264106,
+		choosenCompanyID: null,
+		choosenStaffID: null,
 		staffResult: null,
 		authData: {
 			login: this.props.cookies.get('login') || null,
@@ -63,59 +60,67 @@ class Cosmetology extends Component {
 		isLoading: false,
 	}
 
-	componentDidMount() {
-		let login;
-		let password;
+	componentWillMount() {
+		const userLogin = this.props.cookies.get('login').toLowerCase()
+		let companyID = null
+		let staffID = null
 
-		if (!this.state.authData.login || !this.state.authData.password) {
-			 login = prompt('Логин Yclients')
-			 password = prompt('Пароль Yclients')
-		} else {
-			login = this.state.authData.login;
-			password = this.state.authData.password;
+		if (userLogin === 'arslanbek.khasiev@mail.ru') {
+			companyID = 114454
+			staffID = 264106
+		}  else if (userLogin === '79100155524') {
+			companyID = 169519
+			staffID = 453426
 		}
 
-		this.props.cookies.set('login', login);
-		this.props.cookies.set('password', password);
-
 		this.setState({
-			authData: {
-				login,
-				password,
-			}
-		}, () => {
+			choosenCompanyID: companyID,
+			choosenStaffID: staffID,
+		})
+	}
+
+	componentDidMount() {
+		this.authYclients();
+	}
+
+	authYclients = () => {
+		request({
+			url: 'https://api.yclients.com/api/v1/auth',
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'hu2x584xzw7y7fy34bg5',
+			},
+			data: this.state.authData,
+		}).then(() => {
 			request({
-				url: 'https://api.yclients.com/api/v1/auth',
-				method: 'POST',
+				url: `https://api.yclients.com/api/v1/staff/${this.state.choosenCompanyID}`,
+				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
-					'Authorization': 'hu2x584xzw7y7fy34bg5',
+					'Authorization': partnerID,
 				},
 				data: this.state.authData,
-			}).then(() => {
-				request({
-					url: `https://api.yclients.com/api/v1/staff/${companyID}`,
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-						'Authorization': partnerID,
-					},
-					data: this.state.authData,
-				}).then((staffs) => {
-					this.setState({ staffs })
-				})
+			}).then((staffs) => {
+				// закрыть доступ к данным Юлии Романовной
+				const userLogin = this.props.cookies.get('login').toLowerCase()
+				if (userLogin !== 'arslanbek.khasiev@mail.ru') {
+					staffs = staffs.filter((staff) => staff.id !== 281693)
+				}
+
+				this.setState({ staffs })
 			})
 		})
 	}
 
-	handleStaffChange = ({ target }) => {
+	handleStaffChange = (e) => {
 		this.setState({
 			profit: {
 				services: null,
 				goods: null,
 			},
 			yclientsData: [],
-			choosenStaffID: +target.value,
+			choosenStaffID: +e.target.value,
 			staffResult: null,
 		})
 	}
@@ -126,7 +131,7 @@ class Cosmetology extends Component {
 		const requestEndDate = moment(endDate).format("YYYY-MM-DD")
 
 		request({
-			url: `http://api.yclients.com/api/v1/reports/z_report/${companyID}?start_date=${requestStartDate}&end_date=${requestEndDate}&master_id=${choosenStaffID}`,
+			url: `http://api.yclients.com/api/v1/reports/z_report/${this.state.choosenCompanyID}?start_date=${requestStartDate}&end_date=${requestEndDate}&master_id=${choosenStaffID}`,
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -147,17 +152,16 @@ class Cosmetology extends Component {
 	handleStaffSubmit = (e, page = 1) => {
 		this.getProfitData();
 
-		const { choosenStaffID, startDate, endDate, reportDate } = this.state
+		const { choosenStaffID, choosenCompanyID, startDate, endDate, reportDate } = this.state
 		const requestStartDate = moment(startDate).format("YYYY-MM-DD")
 		const requestEndDate = moment(endDate).format("YYYY-MM-DD")
-
 
 		e.preventDefault()
 
 		this.setState({isLoading: true})
 
 		request({
-			url: `https://api.yclients.com/api/v1/records/${companyID}&staff_id=${choosenStaffID}&start_date=${requestStartDate}&end_date=${requestEndDate}&count=100000&page=${page}`,
+			url: `https://api.yclients.com/api/v1/records/${choosenCompanyID}&staff_id=${choosenStaffID}&start_date=${requestStartDate}&end_date=${requestEndDate}&count=100000&page=${page}`,
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -222,7 +226,7 @@ class Cosmetology extends Component {
 
 				const delayedRequest = () => (
 					request({
-						url: `https://api.yclients.com/api/v1/records/${companyID}&start_date=${requestStartDate}&end_date=${requestEndDate}&count=100000`,
+						url: `https://api.yclients.com/api/v1/records/${choosenCompanyID}&start_date=${requestStartDate}&end_date=${requestEndDate}&count=100000`,
 						method: 'GET',
 						headers: {
 							'Content-Type': 'application/json',
@@ -392,11 +396,29 @@ class Cosmetology extends Component {
 		})
 	}
 
+	handleCompanyChange = (e) => {
+		let staffID = 264106
+
+		if (e.target.value === '114454') {
+			staffID = 264106
+		} else if (e.target.value === '150855') {
+			staffID = 386103
+		} else if (e.target.value === '169519') {
+			staffID = 453426
+		}
+
+		this.setState({
+			choosenCompanyID: e.target.value,
+			choosenStaffID: staffID,
+		}, () => {
+			this.authYclients()
+		})
+	}
 
 	render() {
 		console.log(this.state.profit, 'proffffit state')
-		const { staffs, staffResult } = this.state
 
+		const { staffs, staffResult } = this.state
 		const tariff = {
 			title: "Отчёт по возвращаемости клиентов",
 			name: "space",
@@ -404,14 +426,36 @@ class Cosmetology extends Component {
 			cost: "важно",
 		}
 
+		const userLogin = this.props.cookies.get('login').toLowerCase()
+
+		const companies = [{
+			name: "Med yu med",
+			id: 114454,
+			disabled: userLogin !== 'arslanbek.khasiev@mail.ru'
+		}, {
+			name: "Пятигорск",
+			id: 150855,
+			disabled: userLogin !== 'arslanbek.khasiev@mail.ru'
+		}, {
+			name: "Мотивация",
+			id: 169519,
+		}]
+
 		if (this.state.authData.password) {
 			return (
 				<article className="docs">
-					<Chart/>
-
 					<Tariff name="exclusive" tariff={tariff}>
 						{staffs && <div className="block">
 							<form onSubmit={this.handleStaffSubmit}>
+								<div className="companyField">
+									<label className="label">Выберите филиал:</label>
+									<select onChange={this.handleCompanyChange} className="select">
+										{companies.map((company, id) => (
+											<option value={company.id} disabled={company.disabled}>{company.name}</option>
+										))}
+									</select>
+								</div>
+
 								<label className="label">Выберите сотрудника:</label>
 
 								<select onChange={this.handleStaffChange} className="select">

@@ -42,7 +42,8 @@ const request = async ({url, method = 'GET', data, headers = {}} /* : RequestTyp
 	}
 }
 
-const companyID = 114454
+window.companyID = 114454
+const companyID = window.companyID || 114454
 const partnerID = 'hu2x584xzw7y7fy34bg5'
 const userID = '7a140112eded9ee20ba43f03406138cf'
 
