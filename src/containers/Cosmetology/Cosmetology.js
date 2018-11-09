@@ -65,7 +65,7 @@ class Cosmetology extends Component {
 		let companyID = null
 		let staffID = null
 
-		if (userLogin === 'arslanbek.khasiev@mail.ru') {
+		if (userLogin === 'arslanbek.khasiev@mail.ru' || userLogin === 'usol-irina@yandex.ru') {
 			companyID = 114454
 			staffID = 264106
 		}  else if (userLogin === '79100155524') {
@@ -431,7 +431,7 @@ class Cosmetology extends Component {
 		const companies = [{
 			name: "Med yu med",
 			id: 114454,
-			disabled: userLogin !== 'arslanbek.khasiev@mail.ru'
+			disabled: userLogin !== 'arslanbek.khasiev@mail.ru' && userLogin !== 'usol-irina@yandex.ru'
 		}, {
 			name: "Пятигорск",
 			id: 150855,
@@ -439,6 +439,7 @@ class Cosmetology extends Component {
 		}, {
 			name: "Мотивация",
 			id: 169519,
+			disabled: userLogin !== 'arslanbek.khasiev@mail.ru' && userLogin !== '79100155524'
 		}]
 
 		if (this.state.authData.password) {
