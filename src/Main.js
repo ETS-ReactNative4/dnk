@@ -177,7 +177,7 @@ class Main extends Component {
 					</form>
 				</div>
 
-				<Link className="main_link" to='/cosmetology'>
+				<Link className="main_link" to='/dnk/cosmetology'>
 					<h1 className="main_heading">Отчет по возвращаемости</h1>
 				</Link>
 			</article>

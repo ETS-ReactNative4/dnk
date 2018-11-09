@@ -131,7 +131,7 @@ class Cosmetology extends Component {
 		const requestEndDate = moment(endDate).format("YYYY-MM-DD")
 
 		request({
-			url: `http://api.yclients.com/api/v1/reports/z_report/${this.state.choosenCompanyID}?start_date=${requestStartDate}&end_date=${requestEndDate}&master_id=${choosenStaffID}`,
+			url: `https://api.yclients.com/api/v1/reports/z_report/${this.state.choosenCompanyID}?start_date=${requestStartDate}&end_date=${requestEndDate}&master_id=${choosenStaffID}`,
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
