@@ -9,7 +9,7 @@ import logo from './images/logo.png'
 
 const Header = () => (
 	<header className="header">
-		<Link className="logo" to="/">
+		<Link className="logo" to="/dnk">
 			<img src={logo} alt="DNK Beauty"/>
 		</Link>
 
@@ -17,16 +17,16 @@ const Header = () => (
 			<nav>
 				<ul className="list">
 					<li className="item">
-						<Link className="link" to="/cosmetology">Отчёт по возвращаемости</Link>
+						<Link className="link" to="/dnk/cosmetology">Отчёт по возвращаемости</Link>
 					</li>
 					<li className="item">
-						<Link className="link" to="/manager">Отчёт отдела продаж</Link>
+						<Link className="link" to="/dnk/manager">Отчёт отдела продаж</Link>
 					</li>
 					<li className="item">
-						<Link className="link" to="/deposit">Отчет отдела маркетинга</Link>
+						<Link className="link" to="/dnk/deposit">Отчет отдела маркетинга</Link>
 					</li>
 					<li className="item">
-						<Link className="link" to="/structure">Орг. Структура</Link>
+						<Link className="link" to="/dnk/structure">Орг. Структура</Link>
 					</li>
 				</ul>
 			</nav>

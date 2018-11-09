@@ -18,10 +18,10 @@ ReactDOM.render(
 			<section className="app">
 				<Header/>
 				<Switch>
-					<Route exact path="/" component={Main}/>
-					<Route path="/cosmetology" component={Cosmetology}/>
-					<Route path="/manager" component={Manager}/>
-					<Route path="/structure" component={Structure}/>
+					<Route exact path="/dnk" component={Main}/>
+					<Route path="/dnk/cosmetology" component={Cosmetology}/>
+					<Route path="/dnk/manager" component={Manager}/>
+					<Route path="/dnk/structure" component={Structure}/>
 				</Switch>
 			</section>
 			</BrowserRouter>
