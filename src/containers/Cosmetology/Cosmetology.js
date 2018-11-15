@@ -138,7 +138,7 @@ class Cosmetology extends Component {
 				'Authorization': `Bearer ${partnerID}, User ${userID}`,
 			},
 		}).then(({ data }) => {
-			console.log(data.stats, 'profit')
+			// console.log(data.stats, 'profit')
 
 			this.setState({
 				profit: {
@@ -170,7 +170,7 @@ class Cosmetology extends Component {
 			data: this.state.authData,
 		}).then(({ data: staffsClients }) => {
 
-			console.log(staffsClients, 'staffsClients')
+			// console.log(staffsClients, 'staffsClients')
 
 			if (staffsClients.length === 300) {
 				this.handleStaffSubmit(e, ++page)
@@ -238,12 +238,12 @@ class Cosmetology extends Component {
 
 				async function processArray(array) {
 					await delayedRequest().then(( { data: allClients }) => {
-						console.log(allClients, 'allClients')
-						console.log(yclientsData, 'yclientsData')
-						console.log(attendant, 'attendant')
+						// console.log(allClients, 'allClients')
+						// console.log(yclientsData, 'yclientsData')
+						// console.log(attendant, 'attendant')
 
 						allClients.map(client => {
-							console.log(client.attendance !== -1, client.staff_id !== choosenStaffID, 'b', client.staff_id, choosenStaffID)
+							// console.log(client.attendance !== -1, client.staff_id !== choosenStaffID, 'b', client.staff_id, choosenStaffID)
 							if (!aimedClientsMobiles.includes(client.client.phone) && client.attendance !== -1 && client.staff_id !== choosenStaffID && attendantMobiles.includes(client.client.phone)) {
 								aimedClientsMobiles.push(client.client.phone)
 								aimedClients.push(client)
@@ -284,17 +284,17 @@ class Cosmetology extends Component {
 					const returnMobiles = attendantMobiles.length - uniqMobiles.size
 					const uniqAttendantMobiles = new Set(attendantMobiles)
 
-					console.log(allRecords, 'allRecords все записи')
-					console.log(allMobiles, 'ВСЕ ЗАПИСИ')
-					console.log(new Set(allMobiles), 'Все записи без дублей');
-					console.log(attendantMobiles, 'attendantMobiles все кто пришел до сегодня') // нужно сделать до отчетного дня
-					console.log(uniqAttendantMobiles, 'все кто пришел до сегодня без дублей') // здесь нужно убрать те, что есть в
-					console.log(returnsOfAttendant, 'все кто пришел и их них записан до конца периода')
+					// console.log(allRecords, 'allRecords все записи')
+					// console.log(allMobiles, 'ВСЕ ЗАПИСИ')
+					// console.log(new Set(allMobiles), 'Все записи без дублей');
+					// console.log(attendantMobiles, 'attendantMobiles все кто пришел до сегодня') // нужно сделать до отчетного дня
+					// console.log(uniqAttendantMobiles, 'все кто пришел до сегодня без дублей') // здесь нужно убрать те, что есть в
+					// console.log(returnsOfAttendant, 'все кто пришел и их них записан до конца периода')
 					const arrayOfUniqMobiles = Array.from(uniqMobiles)
-					console.log(arrayOfUniqMobiles, 'все кто пришел и записан без дублей')
-					console.log(returnMobiles, 'returnMobiles все кто пришел и их них записан до конца периода —  все кто пришел и записан без дублей')
-					console.log(aimedClients, 'клиенты, которые были направлены на коллег')
-					console.log(myArr, 'возвращенные')
+					// console.log(arrayOfUniqMobiles, 'все кто пришел и записан без дублей')
+					// console.log(returnMobiles, 'returnMobiles все кто пришел и их них записан до конца периода —  все кто пришел и записан без дублей')
+					// console.log(aimedClients, 'клиенты, которые были направлены на коллег')
+					// console.log(myArr, 'возвращенные')
 
 					const arrayOfReturnMobiles = attendantMobiles.filter(item => {
 						if (!arrayOfUniqMobiles.includes(item)) {
@@ -342,10 +342,27 @@ class Cosmetology extends Component {
 					};
 
 					const compressedUniq = compressArray(allMobiles).compressedUniq;
-					console.log(allMobiles, 'myArrMobiles', compressedUniq, compressedUniq.length)
+					// console.log(allMobiles, 'myArrMobiles', compressedUniq, compressedUniq.length)
+
+
+					console.log(attendant, 'attendant')
+
+					let serviceProfit = 0;
+					attendant.map((client) => {
+						if (client.services.length > 0) {
+							for (var i = 0; i < client.services.length; i++) {
+								serviceProfit += client.services[i].cost
+							}
+						} else {
+							serviceProfit += client.services[0].cost
+						}
+					})
+
+					console.log(serviceProfit, 'amouuuunt')
 
 					this.setState({
 						staffResult: {
+							serviceProfit, // доход по услугам
 							compressedUniq, // Тот самый показатель повторных клиентов
 							allRecordsMobiles, // вообще все записи
 							allMobiles, // все записи на весь срок, кроме не пришедших
@@ -416,7 +433,7 @@ class Cosmetology extends Component {
 	}
 
 	render() {
-		console.log(this.state.profit, 'proffffit state')
+		// console.log(this.state.profit, 'proffffit state')
 
 		const { staffs, staffResult } = this.state
 		const tariff = {
@@ -520,10 +537,10 @@ class Cosmetology extends Component {
 											<div className="row">
 												<span className="name">Доход по услугам:</span>
 												<div className="value">
-													<span>{this.state.profit.services} ₽</span>
+													<span>{staffResult.serviceProfit} ₽</span>
 												</div>
 												<div className="value">
-													<span>{(this.state.profit.services / (this.state.profit.services + this.state.profit.goods) * 100).toFixed(0)}%</span>
+													<span>{(staffResult.serviceProfit / (staffResult.serviceProfit + this.state.profit.goods) * 100).toFixed(0)}%</span>
 												</div>
 											</div>
 
@@ -533,7 +550,7 @@ class Cosmetology extends Component {
 													<span>{this.state.profit.goods} ₽</span>
 												</div>
 												<div className="value">
-												<span>{(this.state.profit.goods / (this.state.profit.services + this.state.profit.goods) * 100).toFixed(0)}%</span>
+												<span>{(this.state.profit.goods / (staffResult.serviceProfit + this.state.profit.goods) * 100).toFixed(0)}%</span>
 												</div>
 											</div>
 
