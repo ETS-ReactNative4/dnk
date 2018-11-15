@@ -189,6 +189,7 @@ class Cosmetology extends Component {
 				const aimedClients = []
 				const aimedClientsMobiles = []
 				const attendant = []
+				const attendantWithoutPhoneNumber = []
 				const myArr = []
 				const myArrMobiles = []
 
@@ -214,9 +215,12 @@ class Cosmetology extends Component {
 
 				// все кто пришел сотрудника
 				for (let j = 0; j < yclientsData.length; j++) {
-					if (yclientsData[j].attendance === 1 && yclientsData[j].client.phone !== "" && moment(reportDate) > moment(yclientsData[j].datetime)) {
-						attendant.push(yclientsData[j])
-						attendantMobiles.push(yclientsData[j].client.phone)
+					if (yclientsData[j].attendance === 1 && moment(reportDate) > moment(yclientsData[j].datetime)) {
+							attendantWithoutPhoneNumber.push(yclientsData[j])
+						if (yclientsData[j].client.phone !== "") {
+							attendant.push(yclientsData[j])
+							attendantMobiles.push(yclientsData[j].client.phone)
+						}
 					}
 
 					if (yclientsData[j].attendance === -1 && yclientsData[j].client.phone !== "" && moment(reportDate) > moment(yclientsData[j].datetime)) {
@@ -348,7 +352,7 @@ class Cosmetology extends Component {
 					console.log(attendant, 'attendant')
 
 					let serviceProfit = 0;
-					attendant.map((client) => {
+					attendantWithoutPhoneNumber.map((client) => {
 						if (client.services.length > 0) {
 							for (var i = 0; i < client.services.length; i++) {
 								serviceProfit += client.services[i].cost
@@ -537,7 +541,7 @@ class Cosmetology extends Component {
 											<div className="row">
 												<span className="name">Доход по услугам:</span>
 												<div className="value">
-													<span>{staffResult.serviceProfit} ₽</span>
+													<span>{new Intl.NumberFormat('ru-RU').format(staffResult.serviceProfit)} ₽</span>
 												</div>
 												<div className="value">
 													<span>{(staffResult.serviceProfit / (staffResult.serviceProfit + this.state.profit.goods) * 100).toFixed(0)}%</span>
@@ -547,7 +551,7 @@ class Cosmetology extends Component {
 											<div className="row">
 												<span className="name">Доход по товарам:</span>
 												<div className="value">
-													<span>{this.state.profit.goods} ₽</span>
+													<span>{new Intl.NumberFormat('ru-RU').format(this.state.profit.goods)} ₽</span>
 												</div>
 												<div className="value">
 												<span>{(this.state.profit.goods / (staffResult.serviceProfit + this.state.profit.goods) * 100).toFixed(0)}%</span>
