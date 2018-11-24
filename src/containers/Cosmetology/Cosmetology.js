@@ -4,6 +4,7 @@ import { withCookies, Cookies } from 'react-cookie';
 
 import Tariff from './../../components/Tariff'
 import Button from './../../components/Button'
+import Chart from './../../components/Chart'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 
@@ -138,8 +139,6 @@ class Cosmetology extends Component {
 				'Authorization': `Bearer ${partnerID}, User ${userID}`,
 			},
 		}).then(({ data }) => {
-			// console.log(data.stats, 'profit')
-
 			this.setState({
 				profit: {
 					services: data.stats.targets_paid,
@@ -169,9 +168,6 @@ class Cosmetology extends Component {
 			},
 			data: this.state.authData,
 		}).then(({ data: staffsClients }) => {
-
-			// console.log(staffsClients, 'staffsClients')
-
 			if (staffsClients.length === 300) {
 				this.handleStaffSubmit(e, ++page)
 
@@ -183,7 +179,8 @@ class Cosmetology extends Component {
 				const allRecordsMobiles = []
 				const allRecords = []
 				const allMobiles = []
-				const attendantMobiles = []
+				const attendantForChart = [] // для графика
+				const attendantMobilesByReportDate = []
 				const canceledMobiles = []
 				const notAttendantMobiles = []
 				const aimedClients = []
@@ -192,14 +189,6 @@ class Cosmetology extends Component {
 				const attendantWithoutPhoneNumber = []
 				const myArr = []
 				const myArrMobiles = []
-
-
-				// &staff_id=${choosenStaffID}
-				// Получаем вообще все записи = yclientsData
-				// Фильтруем на записи staffID
-				// Мапим записи StaffID
-				// Берем номер телефона и ищем повтор во всем списке (также фильтр по дате и то, что другой staffID)
-				//
 
 				// вообще все записи сотрудника
 				for (let i = 0; i < yclientsData.length; i++) {
@@ -215,11 +204,16 @@ class Cosmetology extends Component {
 
 				// все кто пришел сотрудника
 				for (let j = 0; j < yclientsData.length; j++) {
-					if (yclientsData[j].attendance === 1 && moment(reportDate) > moment(yclientsData[j].datetime)) {
+					if (yclientsData[j].attendance === 1) {
+						attendantForChart.push(yclientsData[j])
+
+						if (moment(reportDate) > moment(yclientsData[j].datetime)) {
 							attendantWithoutPhoneNumber.push(yclientsData[j])
-						if (yclientsData[j].client.phone !== "") {
-							attendant.push(yclientsData[j])
-							attendantMobiles.push(yclientsData[j].client.phone)
+
+							if (yclientsData[j].client.phone !== "") {
+								attendant.push(yclientsData[j])
+								attendantMobilesByReportDate.push(yclientsData[j].client.phone)
+							}
 						}
 					}
 
@@ -242,18 +236,14 @@ class Cosmetology extends Component {
 
 				async function processArray(array) {
 					await delayedRequest().then(( { data: allClients }) => {
-						// console.log(allClients, 'allClients')
-						// console.log(yclientsData, 'yclientsData')
-						// console.log(attendant, 'attendant')
-
 						allClients.map(client => {
 							// console.log(client.attendance !== -1, client.staff_id !== choosenStaffID, 'b', client.staff_id, choosenStaffID)
-							if (!aimedClientsMobiles.includes(client.client.phone) && client.attendance !== -1 && client.staff_id !== choosenStaffID && attendantMobiles.includes(client.client.phone)) {
+							if (!aimedClientsMobiles.includes(client.client.phone) && client.attendance !== -1 && client.staff_id !== choosenStaffID && attendantMobilesByReportDate.includes(client.client.phone)) {
 								aimedClientsMobiles.push(client.client.phone)
 								aimedClients.push(client)
 							}
 
-							if (attendantMobiles.includes(client.client.phone) && client.staff_id === choosenStaffID) {
+							if (attendantMobilesByReportDate.includes(client.client.phone) && client.staff_id === choosenStaffID) {
 								myArrMobiles.push(client.client.phone)
 								myArr.push(client)
 							}
@@ -277,7 +267,7 @@ class Cosmetology extends Component {
 
 				let complete = false
 				processArray(yclientsData).then(() => {
-					const returnsOfAttendant = allMobiles.filter(item => attendantMobiles.includes(item))
+					const returnsOfAttendant = allMobiles.filter(item => attendantMobilesByReportDate.includes(item))
 
 					// все кто пришел сотрудника
 					// Вообще все записи сотрудника
@@ -285,8 +275,8 @@ class Cosmetology extends Component {
 					// Получаем список
 
 					const uniqMobiles = new Set(returnsOfAttendant)
-					const returnMobiles = attendantMobiles.length - uniqMobiles.size
-					const uniqAttendantMobiles = new Set(attendantMobiles)
+					const returnMobiles = attendantMobilesByReportDate.length - uniqMobiles.size
+					const uniqAttendantMobiles = new Set(attendantMobilesByReportDate)
 
 					// console.log(allRecords, 'allRecords все записи')
 					// console.log(allMobiles, 'ВСЕ ЗАПИСИ')
@@ -300,14 +290,14 @@ class Cosmetology extends Component {
 					// console.log(aimedClients, 'клиенты, которые были направлены на коллег')
 					// console.log(myArr, 'возвращенные')
 
-					const arrayOfReturnMobiles = attendantMobiles.filter(item => {
+					const arrayOfReturnMobiles = attendantMobilesByReportDate.filter(item => {
 						if (!arrayOfUniqMobiles.includes(item)) {
 							return item
 						}
 					})
 
 					const percentOfReturns = (returnMobiles / uniqAttendantMobiles.size) * 100
-					const futureMobiles = allMobiles.length - attendantMobiles.length
+					const futureMobiles = allMobiles.length - attendantMobilesByReportDate.length
 
 					function compressArray(original) {
 
@@ -346,10 +336,6 @@ class Cosmetology extends Component {
 					};
 
 					const compressedUniq = compressArray(allMobiles).compressedUniq;
-					// console.log(allMobiles, 'myArrMobiles', compressedUniq, compressedUniq.length)
-
-
-					console.log(attendant, 'attendant')
 
 					let serviceProfit = 0;
 					attendantWithoutPhoneNumber.map((client) => {
@@ -362,25 +348,39 @@ class Cosmetology extends Component {
 						}
 					})
 
-					console.log(serviceProfit, 'amouuuunt')
+					const returnsPercent = ((compressedUniq.length / uniqAttendantMobiles.size) * 100).toFixed(1) // Процент возвращаемости
+					const serviceProfitPercent = (serviceProfit / (serviceProfit + this.state.profit.goods) * 100).toFixed(0) // Процент дохода по услугам
+					const goodsProfitPercent = (this.state.profit.goods / (serviceProfit + this.state.profit.goods) * 100).toFixed(0)
+					const futureMobilesPercent = (futureMobiles / uniqAttendantMobiles.size * 100).toFixed(0)
+					const canceledMobilesPercent = (canceledMobiles.length / allRecordsMobiles.length * 100).toFixed(0)
+					const aimedClientsPercent = (aimedClients.length / uniqAttendantMobiles.size * 100).toFixed(0)
 
 					this.setState({
 						staffResult: {
 							serviceProfit, // доход по услугам
-							compressedUniq, // Тот самый показатель повторных клиентов
-							allRecordsMobiles, // вообще все записи
-							allMobiles, // все записи на весь срок, кроме не пришедших
+							serviceProfitPercent, // процент дохода по услугам
+							goodsProfitPercent, // процент дохода по товарам
+							uniqAttendantMobiles, // клиенты, которых обслужили
 							futureMobiles, // записи на будущие даты
-							canceledMobiles, // отказники
-							uniqAttendantMobiles,
-							attendantMobiles, // все кто пришел до отчетного дня
-							notAttendantMobiles, // все кто не пришел до отчетного дня
-							returnsOfAttendant, // все кто записался до конца периода из тех кто пришел
-							aimedClients, // направленные на других
-							uniqMobiles,
-							returnMobiles,
-							percentOfReturns,
-							myArr,
+							futureMobilesPercent, // процент записей на будущие даты
+							canceledMobiles, // клиенты, которые отменились
+							canceledMobilesPercent, // процент записей, которые отменились
+							aimedClients, // клиенты, направленные на других специалистов
+							aimedClientsPercent, // процент клиентов, направленных на других специалистов
+							compressedUniq, // Количество возвращенных клиентов
+							returnsPercent, // показатель возвращаемости
+							attendantForChart, // Все телефоны, без фильтра по отчетному дню (для графика)
+
+							// allRecordsMobiles, // вообще все записи
+							// allMobiles, // все записи на весь срок, кроме не пришедших
+							// attendantMobilesByReportDate, // все кто пришел до отчетного дня
+							// notAttendantMobiles, // все кто не пришел до отчетного дня
+							// returnsOfAttendant, // все кто записался до конца периода из тех кто пришел
+							//
+							// uniqMobiles,
+							// returnMobiles,
+							// percentOfReturns,
+							// myArr,
 						},
 						isLoading: false,
 					})
@@ -544,7 +544,7 @@ class Cosmetology extends Component {
 													<span>{new Intl.NumberFormat('ru-RU').format(staffResult.serviceProfit)} ₽</span>
 												</div>
 												<div className="value">
-													<span>{(staffResult.serviceProfit / (staffResult.serviceProfit + this.state.profit.goods) * 100).toFixed(0)}%</span>
+													<span>{staffResult.serviceProfitPercent}%</span>
 												</div>
 											</div>
 
@@ -554,7 +554,7 @@ class Cosmetology extends Component {
 													<span>{new Intl.NumberFormat('ru-RU').format(this.state.profit.goods)} ₽</span>
 												</div>
 												<div className="value">
-												<span>{(this.state.profit.goods / (staffResult.serviceProfit + this.state.profit.goods) * 100).toFixed(0)}%</span>
+												<span>{staffResult.goodsProfitPercent}%</span>
 												</div>
 											</div>
 
@@ -575,7 +575,7 @@ class Cosmetology extends Component {
 													<span>{staffResult.futureMobiles}</span>
 												</div>
 												<div className="value">
-													<span>{(staffResult.futureMobiles / staffResult.uniqAttendantMobiles.size * 100).toFixed(0)}%</span>
+													<span>{staffResult.futureMobilesPercent}%</span>
 												</div>
 											</div>
 
@@ -586,7 +586,7 @@ class Cosmetology extends Component {
 												</div>
 
 												<div className="value">
-													<span>{(staffResult.canceledMobiles.length / staffResult.allRecordsMobiles.length * 100).toFixed(0)}%</span>
+													<span>{staffResult.canceledMobilesPercent}%</span>
 												</div>
 											</div>
 
@@ -597,7 +597,7 @@ class Cosmetology extends Component {
 												</div>
 
 												<div className="value">
-													<span>{(staffResult.aimedClients.length / staffResult.uniqAttendantMobiles.size * 100).toFixed(0)}%</span>
+													<span>{staffResult.aimedClientsPercent}%</span>
 												</div>
 											</div>
 
@@ -607,16 +607,18 @@ class Cosmetology extends Component {
 													<span>{staffResult.compressedUniq.length}</span>
 												</div>
 												<div className="value">
-													<span>{((staffResult.compressedUniq.length / staffResult.uniqAttendantMobiles.size) * 100).toFixed(1)}%</span>
+													<span>{staffResult.returnsPercent}%</span>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
+							<div className="chart">
+								<Chart data={staffResult} name={this.getStaff().name} startDate={this.state.startDate} endDate={this.state.endDate}/>
+							</div>
 						</div>
 					}
-
 				</article>
 			)
 		}
