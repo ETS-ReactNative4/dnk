@@ -29,8 +29,13 @@ form {
 	position: relative;
 	display: flex;
 	justify-content: center;
+	flex-direction: column;
 	text-align: left;
 	margin-top: 50px;
+}
+
+.chart {
+	margin-top: 100px;
 }
 
 .select,
