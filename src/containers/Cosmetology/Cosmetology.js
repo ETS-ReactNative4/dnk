@@ -66,10 +66,13 @@ class Cosmetology extends Component {
 		let companyID = null
 		let staffID = null
 
-		if (userLogin === 'arslanbek.khasiev@mail.ru' || userLogin === 'usol-irina@yandex.ru') {
+		if (userLogin === 'arslanbek.khasiev@mail.ru') {
+			companyID = 114454
+			staffID = 281693
+		}  else if (userLogin === 'usol-irina@yandex.ru') {
 			companyID = 114454
 			staffID = 264106
-		}  else if (userLogin === '79100155524') {
+		} else if (userLogin === '79100155524') {
 			companyID = 169519
 			staffID = 453426
 		}
@@ -418,10 +421,10 @@ class Cosmetology extends Component {
 	}
 
 	handleCompanyChange = (e) => {
-		let staffID = 264106
+		let staffID = 281693
 
 		if (e.target.value === '114454') {
-			staffID = 264106
+			staffID = 281693
 		} else if (e.target.value === '150855') {
 			staffID = 386103
 		} else if (e.target.value === '169519') {
@@ -437,8 +440,6 @@ class Cosmetology extends Component {
 	}
 
 	render() {
-		// console.log(this.state.profit, 'proffffit state')
-
 		const { staffs, staffResult } = this.state
 		const tariff = {
 			title: "Отчёт по возвращаемости клиентов",
