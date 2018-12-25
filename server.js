@@ -18,10 +18,17 @@ app.use(function(req, res, next) {
 
 app.get('/', function (req, res) {
 	console.log('here')
-	request.get(`http://fgpstepanov.amocrm.ru/api/v2/leads?USER_LOGIN=fgp.stepanov@yandex.ru&USER_HASH=b59844aaa7ed1e42c43b5ff1e2a8747ee827a8c2&responsible_user_id=2502274&status[0]=20972836&status[1]=22210315&status[2]=20184184&status[3]=22210318&filter[date_create][from]=${req.query.from}&filter[date_create][to]=${req.query.to}`, function(err, httpResponse, body) {
-		console.log(JSON.parse(body), 'don')
-		res.send(JSON.parse(body))
-	})
+	// request.get(`http://fgpstepanov.amocrm.ru/api/v2/leads?USER_LOGIN=fgp.stepanov@yandex.ru&USER_HASH=b59844aaa7ed1e42c43b5ff1e2a8747ee827a8c2&responsible_user_id=2502274&status[0]=20972836&status[1]=22210315&status[2]=20184184&status[3]=22210318&filter[date_create][from]=${req.query.from}&filter[date_create][to]=${req.query.to}`, function(err, httpResponse, body) {
+	// 	console.log(JSON.parse(body), 'don')
+	// 	res.send(JSON.parse(body))
+	// })
+
+	console.log(res.statusCode)
+	// if (res.statusCode === 503) {
+	//   console.error('RETRY', url);
+	//   response = await fetch(url, fetchOptions).catch(catchError);
+	//   statusCode = response.status;
+	// }
 });
 
 
