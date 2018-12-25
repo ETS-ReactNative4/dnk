@@ -17,8 +17,7 @@ app.use(function(req, res, next) {
 });
 
 app.get('/', function (req, res) {
-	console.log('here')
-	res.send('heelo word', req.query.from, req.query.to)
+	res.send('Connected')
 	// request.get(`http://fgpstepanov.amocrm.ru/api/v2/leads?USER_LOGIN=fgp.stepanov@yandex.ru&USER_HASH=b59844aaa7ed1e42c43b5ff1e2a8747ee827a8c2&responsible_user_id=2502274&status[0]=20972836&status[1]=22210315&status[2]=20184184&status[3]=22210318&filter[date_create][from]=${req.query.from}&filter[date_create][to]=${req.query.to}`, function(err, httpResponse, body) {
 	// 	console.log(JSON.parse(body), 'don')
 	// 	res.send(JSON.parse(body))
@@ -36,7 +35,6 @@ app.get('/amo', function (req, res) {
 	console.log('amo')
 	// res.send('heelo word', req.query.from, req.query.to)
 	request.get(`http://fgpstepanov.amocrm.ru/api/v2/leads?USER_LOGIN=fgp.stepanov@yandex.ru&USER_HASH=b59844aaa7ed1e42c43b5ff1e2a8747ee827a8c2&responsible_user_id=2502274&status[0]=20972836&status[1]=22210315&status[2]=20184184&status[3]=22210318&filter[date_create][from]=${req.query.from}&filter[date_create][to]=${req.query.to}`, function(err, httpResponse, body) {
-		console.log(JSON.parse(body), 'don')
 		res.send(JSON.parse(body))
 	})
 
