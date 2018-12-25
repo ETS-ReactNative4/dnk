@@ -135,7 +135,7 @@ class Manager extends Component {
 		// делаем фильтр сделок по ключу 'created_at'
 		// считаем count
 		request({
-			url: `http://localhost:${port}?from=${moment(this.state.reportDate).startOf('day').unix()}&to=${moment(this.state.reportDate).add(2, 'day').startOf('day').unix()}`,
+			url: `https://quiet-fortress-42756.herokuapp.com/amo?from=${moment(this.state.reportDate).startOf('day').unix()}&to=${moment(this.state.reportDate).add(2, 'day').startOf('day').unix()}`,
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
