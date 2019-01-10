@@ -173,7 +173,7 @@ class Cosmetology extends Component {
 		}).then(({ data: staffsClients }) => {
 			if (staffsClients.length === 300) {
 				this.handleStaffSubmit(e, ++page)
-
+				console.log('BO1')
 				this.setState({
 					yclientsData: staffsClients
 				})
@@ -245,7 +245,7 @@ class Cosmetology extends Component {
 								aimedClientsMobiles.push(client.client.phone)
 								aimedClients.push(client)
 							}
-
+							console.log('BO2')
 							if (attendantMobilesByReportDate.includes(client.client.phone) && client.staff_id === choosenStaffID) {
 								myArrMobiles.push(client.client.phone)
 								myArr.push(client)
@@ -299,6 +299,7 @@ class Cosmetology extends Component {
 						}
 					})
 
+
 					const percentOfReturns = (returnMobiles / uniqAttendantMobiles.size) * 100
 					const futureMobiles = allMobiles.length - attendantMobilesByReportDate.length
 
@@ -338,18 +339,21 @@ class Cosmetology extends Component {
 						};
 					};
 
-					const compressedUniq = compressArray(allMobiles).compressedUniq;
 
+
+					const compressedUniq = compressArray(allMobiles).compressedUniq;
 					let serviceProfit = 0;
 					attendantWithoutPhoneNumber.map((client) => {
+
 						if (client.services.length > 0) {
 							for (var i = 0; i < client.services.length; i++) {
 								serviceProfit += client.services[i].cost
 							}
-						} else {
+						} else if (client.services[0]) {
 							serviceProfit += client.services[0].cost
 						}
 					})
+
 
 					const returnsPercent = ((compressedUniq.length / uniqAttendantMobiles.size) * 100).toFixed(1) // Процент возвращаемости
 					const serviceProfitPercent = (serviceProfit / (serviceProfit + this.state.profit.goods) * 100).toFixed(0) // Процент дохода по услугам
@@ -357,7 +361,7 @@ class Cosmetology extends Component {
 					const futureMobilesPercent = (futureMobiles / uniqAttendantMobiles.size * 100).toFixed(0)
 					const canceledMobilesPercent = (canceledMobiles.length / allRecordsMobiles.length * 100).toFixed(0)
 					const aimedClientsPercent = (aimedClients.length / uniqAttendantMobiles.size * 100).toFixed(0)
-
+					console.log('BO3')
 					this.setState({
 						staffResult: {
 							serviceProfit, // доход по услугам
@@ -423,11 +427,17 @@ class Cosmetology extends Component {
 	handleCompanyChange = (e) => {
 		let staffID = 281693
 
-		if (e.target.value === '114454') {
+		if (e.target.value === '114454') {  // фадеева
 			staffID = 281693
-		} else if (e.target.value === '150855') {
+		} else if (e.target.value === '170884') { // киевская
+			staffID = 457562
+		} else if (e.target.value === '150855') { // пятигорск
 			staffID = 386103
-		} else if (e.target.value === '169519') {
+		} else if (e.target.value === '178997') { // ярославль
+			staffID = 494436
+		} else if (e.target.value === '178998') { // брянск
+			staffID = 487324
+		} else if (e.target.value === '169519') { // мотивация
 			staffID = 453426
 		}
 
@@ -455,8 +465,20 @@ class Cosmetology extends Component {
 			id: 114454,
 			disabled: userLogin !== 'arslanbek.khasiev@mail.ru' && userLogin !== 'usol-irina@yandex.ru'
 		}, {
+			name: "Киевская",
+			id: 170884,
+			disabled: userLogin !== 'arslanbek.khasiev@mail.ru' && userLogin !== 'Dovar2008@gmail.com'
+		}, {
 			name: "Пятигорск",
 			id: 150855,
+			disabled: userLogin !== 'arslanbek.khasiev@mail.ru'
+		}, {
+			name: "Ярославль",
+			id: 178997,
+			disabled: userLogin !== 'arslanbek.khasiev@mail.ru'
+		}, {
+			name: "Брянск",
+			id: 178998,
 			disabled: userLogin !== 'arslanbek.khasiev@mail.ru'
 		}, {
 			name: "Мотивация",
