@@ -1,0 +1,38 @@
+ID приложения: 641653556290740
+
+секрет 7a11f6e726873afab83f29ac9c29438c
+
+
+FB.login(function(response) {
+    if (response.authResponse) {
+     console.log('Welcome!  Fetching your information.... ');
+     FB.api('/me', function(response) {
+       console.log('Good to see you, ' + response.name + '.');
+     });
+    } else {
+     console.log('User cancelled login or did not fully authorize.');
+    }
+});
+
+
+
+const bizSdk = require('facebook-nodejs-business-sdk');
+
+const accessToken = 'your-access-token';
+const accountId = 'act_{your-adaccount-id}';
+
+const FacebookAdsApi = bizSdk.FacebookAdsApi.init(accessToken);
+const AdAccount = bizSdk.AdAccount;
+const Campaign = bizSdk.Campaign;
+
+const account = new AdAccount(accountId);
+var campaigns;
+
+account.read([AdAccount.Fields.name])
+  .then((account) =>{
+    return account.getCampaigns([Campaign.Fields.name], { limit: 10 }) // fields array and params
+  })
+  .then((result) =>{
+    campaigns = result
+    campaigns.forEach((campaign) =>console.log(campaign.name))
+  }).catch(console.error);

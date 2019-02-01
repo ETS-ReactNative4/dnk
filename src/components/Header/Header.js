@@ -23,7 +23,7 @@ const Header = () => (
 						<Link className="link" to="/dnk/manager">Отчёт отдела продаж</Link>
 					</li>
 					<li className="item">
-						<Link className="link" to="/dnk/deposit">Отчет отдела маркетинга</Link>
+						<Link className="link" to="/dnk/marketing">Отчет отдела маркетинга</Link>
 					</li>
 					<li className="item">
 						<Link className="link" to="/dnk/structure">Орг. Структура</Link>
