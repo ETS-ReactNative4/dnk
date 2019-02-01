@@ -4,6 +4,7 @@ import './index.css';
 import Main from './Main';
 import Cosmetology from './containers/Cosmetology'
 import Manager from './containers/Manager'
+import Marketing from './containers/Marketing'
 import Structure from './containers/Structure'
 import Header from './components/Header'
 import registerServiceWorker from './registerServiceWorker';
@@ -21,6 +22,7 @@ ReactDOM.render(
 					<Route exact path="/dnk" component={Main}/>
 					<Route path="/dnk/cosmetology" component={Cosmetology}/>
 					<Route path="/dnk/manager" component={Manager}/>
+					<Route path="/dnk/marketing" component={Marketing}/>
 					<Route path="/dnk/structure" component={Structure}/>
 				</Switch>
 			</section>
