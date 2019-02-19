@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import { withCookies, Cookies } from 'react-cookie';
-import logo from './logo.jpg'
-import moment from 'moment';
-
 import classnames from 'classnames/bind'
+import moment from 'moment';
+import request from './../../utils/request'
+import getState from './get-state.js'
+import config from './config'
+import logo from './logo.jpg'
 
 import styles from './Marketing.css'
 
@@ -17,67 +19,149 @@ const t = new Trello("d9236b46476892005ccea3bb01638114", "2c56694a3dde115d5d23e6
 require('moment/locale/ru');
 
 const cx = classnames.bind(styles)
-moment.locale('ru');
+moment.locale('ru')
 
 
-// id доски 5c18f86b5c8bcd5af8c1d482
 
-// /boards/{id}/lists
-const lists = {
-	'recallKris': '5c52d09ca61c157ad5d3572c', // "На перезвон (Кристина)"
-	'recallLove': '5c41badc0b6e4163ec6dee0b', // "На перезвон (Любовь)"
-	'almostKris': '5c519b45a3796f533a12f678', // "Дожать (Кристина)"
-	'almostLove': '5c448ce56dd2794807f67484', // "Дожать (Любовь)"
-	'successKris': '5c519bafd53bd95e92007589', // "Подтвердились (Кристина)"
-	'successLove' : '5c40748a0962938a10c1761e', // "Подтвердились (Любовь)"
-	'failKris': '5c519bbfe37472244a349b35', // "Не подтвердились (Кристина)"
-	'failLove': '5c40749811c6847eb255a24c', // "Не подтвердились (Любовь)"
-	'cameKris': '5c519bd4e368320cb86860a1', // "Пришли (Кристина)"
-	'cameLove': '5c458f7a2079178eb8604a1c', // "Пришли (Любовь)"
-}
+// FACEBOOK APP SECRET 7a11f6e726873afab83f29ac9c29438c
+// AccessToken EAAJHlJxKpLQBAINIdlCIxlQeAHD3OTJMemcbOpL1DPZBZCQH5dlMnxcNzGmwyfcpvcD2YqIDvQPb7fz0TgOLZBbZADlpKqzcHTYka35f2e9ZCRyRRlnKEGYhs2ZCaCQH2Y0O3BL8gvP0LvGZBluU8z2oLr9S0rLsLYZD
 
-const managerIds = {
-	'Love': '5c405bf4dd639450428e1abc',
-	'Kris': '5c503c7703a4ed637870a235'
-}
+//
+// const adsSdk = require('facebook-nodejs-business-sdk');
+// const accessToken = 'EAAJHlJxKpLQBAINIdlCIxlQeAHD3OTJMemcbOpL1DPZBZCQH5dlMnxcNzGmwyfcpvcD2YqIDvQPb7fz0TgOLZBbZADlpKqzcHTYka35f2e9ZCRyRRlnKEGYhs2ZCaCQH2Y0O3BL8gvP0LvGZBluU8z2oLr9S0rLsLYZD';
+// const api = adsSdk.FacebookAdsApi.init(accessToken);
+// const AdAccount = adsSdk.AdAccount;
+// const Lead = adsSdk.Lead;
+// const Ad = adsSdk.Ad;
+// const id = '23843158445810239'
+// const Campaign = adsSdk.Campaign;
+// const account = new AdAccount('act_132461390881309');
+// // api.setDebug(true);
+//
+// const f = async () => {
+//
+// 		let campaigns = await account.getCampaigns([Campaign.Fields.name], {
+// 			limit: 20,
+// 			[Campaign.Fields.effective_status]: [Campaign.EffectiveStatus.active],
+// 		});
+//
+// 		campaigns.forEach(c => {
+// 			console.log(c, 'CCCC')
+//
+// 			let fields, params;
+// 			fields = ['field_data'];
+// 			params = { 'filtering' : [{'field':'time_created','operator':'GREATER_THAN','value':1546549613}],};
+// 			const leadss = (new Ad(id)).getLeads(
+// 			  fields,
+// 			  params
+// 			).then(ans => console.log(ans));
+// 		});
+//
+// 		while (campaigns.hasNext()) {
+// 			campaigns = await campaigns.next();
+// 			campaigns.forEach(c => console.log(c.name));
+// 		}
+// };
+//
+// f();
 
-const trelloStates = {
-	recall: {
-		Love: '5c41badc0b6e4163ec6dee0b',
-		Kris: '5c52d09ca61c157ad5d3572c'
-	},
-	almost: {
-		Love: '5c448ce56dd2794807f67484',
-		Kris: '5c519b45a3796f533a12f678'
-	},
-	success: {
-		Love: '5c40748a0962938a10c1761e',
-		Kris: '5c519bafd53bd95e92007589'
-	},
-	fail: {
-		Love: '5c40749811c6847eb255a24c',
-		Kris: '5c519bbfe37472244a349b35'
-	},
-	came: {
-		Love: '5c458f7a2079178eb8604a1c',
-		Kris: '5c519bd4e368320cb86860a1'
-	}
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class Marketing extends Component {
-	state = {
-		allData: [],
-		dayData: [],
-		choosenDate: moment(),
-		choosenFormattedDate: moment().format('DD/MM/YYYY'),
-		choosenTillDate: moment(),
-		choosenFormattedTillDate: moment().format('DD/MM/YYYY'),
-		selectedAdTypes: ['ВК', 'Instagram'],
-		selectedManagers: ['Love', 'Kris'],
-		selectedCompanies: ['Киевская', 'Ярославль', 'Брянск'],
-		urls: [], //  урлы на выбранный тип карточек при клике
-		isLoading: false,
+	state = getState(this.props)
+
+	authYclients = (mobiles, alreadyFilteredRecords = [], alreadyProfit = 0, page = 0) => {
+		/* eslint-disable */
+		const {choosenCompanyIds, choosenDate, choosenTillDate } = this.state
+		const requestStartDate = moment(choosenDate).format("YYYY-MM-DD")
+		const requestEndDate = moment(choosenTillDate).format("YYYY-MM-DD")
+
+		request({
+			...config.yclientsAuthConfig,
+			data: this.state.authData
+		}).then(() => {
+			for (let i = 0; i < choosenCompanyIds.length; i++) {
+				request({
+					url: `https://api.yclients.com/api/v1/records/${choosenCompanyIds[i]}&start_date=${requestStartDate}&end_date=${requestEndDate}&count=100000&page=${page}`,
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${config.partnerID}, User ${config.userID}`,
+					},
+					data: this.state.authData,
+				}).then((records) => {
+					// Фильтруем данные YCLIENTS и оставляем только те записи, которые совпадают с записями Trello по номеру телефона
+					const filteredRecords = records.data.filter(record => {
+						let result = false;
+
+						mobiles.map(mobile => {
+							if (record && record.client && record.client.phone.indexOf(mobile) !== -1) {
+								console.log(record.client, mobile, "SPLASH!")
+								result = true
+							}
+						})
+
+						return result
+					})
+
+					console.log(filteredRecords, 'Yclients records filtered by trello')
+
+					let profit = 0;
+
+					filteredRecords.map((record) => {
+						// считаем выручку только по пришедшим
+						if (record.attendance === 1) {
+							let summary = 0;
+
+							record.services.map(service => summary += +service.cost)
+
+							profit += summary
+						}
+					}, 0)
+
+					console.log(profit, 'PROFIT')
+
+					const companyId = choosenCompanyIds[i]
+
+					this.setState({
+						allTraficRecords: {
+							...this.state.allTraficRecords,
+							[companyId]: {
+								records: [...alreadyFiltedRecords, ...filteredRecords],
+								profit: alreadyProfit + profit,
+							},
+						}
+					})
+
+					// if (records.length === 300) {
+					// 	this.authYclients(mobiles, filteredRecords, profit, ++page)
+					// }
+				})
+			}
+		})
+		/* eslint-enable */
 	}
 
 	handleChangeDate = (date) => {
@@ -97,7 +181,6 @@ class Marketing extends Component {
 			choosenTillDate: date
 		})
 	}
-
 
 	handleSubmit = (e) => {
 		e.preventDefault()
@@ -126,73 +209,49 @@ class Marketing extends Component {
 				return result
 			})
 
-			const allData = {
-				'5c52d09ca61c157ad5d3572c': {
-					name: "На перезвон (Кристина)",
-					data: []
-				},
-				'5c41badc0b6e4163ec6dee0b': {
-					name: "На перезвон (Любовь)",
-					data: []
-				},
-				'5c519b45a3796f533a12f678': {
-					name: "Дожать (Кристина)",
-					data: []
-				},
-				'5c448ce56dd2794807f67484': {
-					name: "Дожать (Любовь)",
-					data: [],
-				},
-				'5c519bafd53bd95e92007589': {
-					name: "Подтвердились (Кристина)",
-					data: []
-				},
-				'5c40748a0962938a10c1761e': {
-					name: "Подтвердились (Любовь)",
-					data: [],
-				},
-				'5c519bbfe37472244a349b35': {
-					name: "Не подтвердились (Кристина)",
-					data: []
-				},
-				'5c40749811c6847eb255a24c': {
-					name: "Не подтвердились (Любовь)",
-					data: [],
-				},
-				'5c519bd4e368320cb86860a1': {
-					name: 'Пришли (Кристина)',
-					data: [],
-				},
-				'5c458f7a2079178eb8604a1c': {
-					name: 'Пришли (Любовь)',
-					data: []
-				}
-			}
+			// console.log(dayData, 'dayData')
 
-			dayData.map(card => {
-				allData[card.idList].data.push(card)
+			const regex = /(\+7|7|8)?[\s\-]?\(?[4689][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}/gm; // find mobile phone
+			const reg = /((\+7|^7|^8|-| |\(|\)))/gm; // remove brackets and +7, 8, -
+
+			const mobiles = dayData.map(data => {
+				const fullPhone = data.desc.match(regex)[0]
+				const phone = fullPhone.replace(reg, '')
+
+				return phone
 			})
 
-			this.setState({ dayData: dayData, allData: allData, isLoading: false })
+			console.log(mobiles, 'mobiles')
+
+			this.authYclients(mobiles);
+
+			dayData.map(card => {
+				config.allData[card.idList].data.push(card)
+			})
+
+			this.setState({ dayData, allData: config.allData, isLoading: false })
 		})
 	}
 
 	handleClick = (type) => {
+		const myData = []
 		const selectedTrelloStatusId = [];
 
 		this.state.selectedManagers.map(manager => {
-			selectedTrelloStatusId.push(trelloStates[type][manager])
+			selectedTrelloStatusId.push(config.trelloStates[type][manager])
 		})
-
-		const myData = []
 
 		selectedTrelloStatusId.map(id => {
 			myData.push(...this.state.allData[id].data)
 		})
 
-		const urls = myData.map(data => data.shortUrl)
+		const selectedLeads = myData.map(data => ({
+			name: data.name,
+			link: data.shortUrl
+		}))
 
-		this.setState({ urls })
+		console.log(myData, 'myData')
+		this.setState({ selectedLeads })
 	}
 
 	handleChangeAds = (ads) => {
@@ -209,7 +268,6 @@ class Marketing extends Component {
 		this.setState({ selectedManagers: newSelectedManagers })
 	}
 
-
 	handleChangeCompany = (company) => {
 		const { selectedCompanies } = this.state
 		const newSelectedCompanies = selectedCompanies.includes(company) ? [...selectedCompanies].filter(type => type !== company) : [...selectedCompanies, company]
@@ -217,12 +275,16 @@ class Marketing extends Component {
 		this.setState({ selectedCompanies: newSelectedCompanies })
 	}
 
-	calculateData = (type, love, kris) => {
+	calculateData = (type, love, kris, marina) => {
 		const { allData, selectedAdTypes, selectedManagers, selectedCompanies } = this.state
 
 		const preformattedData = [...allData[love].data, ...allData[kris].data]
 
-		let recallData = preformattedData.filter(data => {
+		if (marina) {
+			preformattedData.push(...allData[marina].data)
+		}
+
+		let calculatedData = preformattedData.filter(data => {
 			let result = false
 
 			selectedAdTypes.map((ads) => {
@@ -238,11 +300,11 @@ class Marketing extends Component {
 			return result
 		})
 
-		recallData = recallData.filter(data => {
+		calculatedData = calculatedData.filter(data => {
 			let result = false
 
 			selectedManagers.map((manager) => {
-				if (data.idMembers.includes(managerIds[manager])) {
+				if (data.idMembers.includes(config.managerIds[manager])) {
 					result = true
 				}
 			})
@@ -250,7 +312,7 @@ class Marketing extends Component {
 			return result
 		})
 
-		recallData = recallData.filter(data => {
+		calculatedData = calculatedData.filter(data => {
 			let result = false
 
 			selectedCompanies.map((company) => {
@@ -262,11 +324,12 @@ class Marketing extends Component {
 			return result
 		})
 
-		return recallData
+		return calculatedData
 	}
 
 	render() {
 		const {
+			allTraficRecords,
 			choosenDate,
 			choosenFormattedDate,
 			choosenTillDate,
@@ -275,34 +338,28 @@ class Marketing extends Component {
 			selectedAdTypes,
 			selectedManagers,
 			selectedCompanies,
-			urls
+			selectedLeads
 		} = this.state
 
-		const tariff = {
-			title: "Сквозная Аналитика",
-			name: "exclusive",
-			description: "Статистика от рекламного объявления до денег в кассе",
-			cost: "важно",
-		}
-
+		// Если выбран одинаковый день, показываем 1 день, а не период
 		const period = choosenFormattedDate === choosenFormattedTillDate ? moment(choosenDate).format("DD MMMM") : moment(choosenDate).format("DD MMMM") + " — " + moment(choosenTillDate).format("DD MMMM")
 
-		let recallData, almostData, failData, successData, cameData, fullData;
+		let recallData, almostData, failData, successData, cameData, fullData, profit = 0;
 
 		if (dayData.length > 0) {
-			recallData = this.calculateData('recall', '5c52d09ca61c157ad5d3572c', '5c41badc0b6e4163ec6dee0b')
+			recallData = this.calculateData('recall', '5c52d09ca61c157ad5d3572c', '5c41badc0b6e4163ec6dee0b', '5c599ae87acfc2222892c32c')
 			almostData = this.calculateData('almost', '5c519b45a3796f533a12f678', '5c448ce56dd2794807f67484')
-			failData = this.calculateData('fail', '5c519bbfe37472244a349b35', '5c40749811c6847eb255a24c')
-			successData = this.calculateData('success', '5c519bafd53bd95e92007589', '5c40748a0962938a10c1761e')
-			cameData = this.calculateData('came', '5c519bd4e368320cb86860a1', '5c458f7a2079178eb8604a1c')
+			failData = this.calculateData('fail', '5c519bbfe37472244a349b35', '5c40749811c6847eb255a24c', '5c599af68d2ae576c3bd43e2')
+			successData = this.calculateData('success', '5c519bafd53bd95e92007589', '5c40748a0962938a10c1761e', '5c599aefa412b12ab3c50dcd')
+			cameData = this.calculateData('came', '5c519bd4e368320cb86860a1', '5c458f7a2079178eb8604a1c', '5c599afa80c92065602bc134')
 			fullData = [...recallData, ...almostData, ...failData, ...successData, ...cameData]
 
-			console.log(selectedAdTypes, selectedManagers, selectedCompanies, recallData)
+			selectedCompanies.map((current) => profit += allTraficRecords[config.mapperCompanies[current]].profit)
 		}
 
 		return (
 			<article className="docs">
-				<Tariff name="space" tariff={tariff}>
+				<Tariff name="space" tariff={config.tariff}>
 					<div className="block">
 						<form onSubmit={this.handleSubmit}>
 							<div className="dateField">
@@ -356,7 +413,7 @@ class Marketing extends Component {
 											<h3>Р.К.</h3>
 											<div className="buttonsField">
 												<Button className={cx('filterButton', { unChoosen: !selectedAdTypes.includes('ВК')})} onClick={() => this.handleChangeAds('ВК')}>ВК</Button>
-												<Button className={cx('filterButton', { unChoosen: !selectedAdTypes.includes('Instagram')})} onClick={() => this.handleChangeAds('Instagram')}>Instagram</Button>
+												<Button className={cx('filterButton', { unChoosen: !selectedAdTypes.includes('Instagram')})} onClick={() => this.handleChangeAds('Instagram')}>Instgram</Button>
 											</div>
 										</div>
 
@@ -365,6 +422,7 @@ class Marketing extends Component {
 											<div className="buttonsField">
 												<Button className={cx('filterButton', { unChoosen: !selectedManagers.includes('Love')})} onClick={() => this.handleChangeManager('Love')}>Любовь</Button>
 												<Button className={cx('filterButton', { unChoosen: !selectedManagers.includes('Kris')})} onClick={() => this.handleChangeManager('Kris')}>Кристина</Button>
+												<Button className={cx('filterButton', { unChoosen: !selectedManagers.includes('Marina')})} onClick={() => this.handleChangeManager('Marina')}>Марина</Button>
 											</div>
 										</div>
 									</div>
@@ -376,6 +434,7 @@ class Marketing extends Component {
 												<Button className={cx('filterButton', { unChoosen: !selectedCompanies.includes('Киевская')})} onClick={() => this.handleChangeCompany('Киевская')}>Киевская</Button>
 												<Button className={cx('filterButton', { unChoosen: !selectedCompanies.includes('Ярославль')})} onClick={() => this.handleChangeCompany('Ярославль')}>Ярославль</Button>
 												<Button className={cx('filterButton', { unChoosen: !selectedCompanies.includes('Брянск')})} onClick={() => this.handleChangeCompany('Брянск')}>Брянск</Button>
+												<Button className={cx('filterButton', { unChoosen: !selectedCompanies.includes('Пятигорск')})} onClick={() => this.handleChangeCompany('Пятигорск')}>Пятигорск</Button>
 											</div>
 										</div>
 									</div>
@@ -397,7 +456,7 @@ class Marketing extends Component {
 										</div>
 
 										<div className="value">
-											<span>{((recallData.length) / dayData.length * 100).toFixed(1)}%</span>
+											<span>{((recallData.length) / fullData.length * 100).toFixed(1)}%</span>
 										</div>
 									</div>
 
@@ -408,7 +467,7 @@ class Marketing extends Component {
 										</div>
 
 										<div className="value">
-											<span>{(almostData.length / dayData.length * 100).toFixed(1)}%</span>
+											<span>{(almostData.length / fullData.length * 100).toFixed(1)}%</span>
 										</div>
 									</div>
 
@@ -419,7 +478,7 @@ class Marketing extends Component {
 										</div>
 
 										<div className="value">
-											<span>{(failData.length / dayData.length * 100).toFixed(1)}%</span>
+											<span>{(failData.length / fullData.length * 100).toFixed(1)}%</span>
 										</div>
 									</div>
 
@@ -430,7 +489,7 @@ class Marketing extends Component {
 										</div>
 
 										<div className="value">
-											<span>{(successData.length / dayData.length * 100).toFixed(1)}%</span>
+											<span>{(successData.length / fullData.length * 100).toFixed(1)}%</span>
 										</div>
 									</div>
 
@@ -442,7 +501,7 @@ class Marketing extends Component {
 										</div>
 
 										<div className="value">
-											<span>{(cameData.length / dayData.length * 100).toFixed(1)}%</span>
+											<span>{(cameData.length / fullData.length * 100).toFixed(1)}%</span>
 										</div>
 									</div>
 
@@ -456,12 +515,45 @@ class Marketing extends Component {
 											<span>100%</span>
 										</div>
 									</div>
+
+									<div className="row">
+										<span className="marketingName">Выручка:</span>
+										<div className="value">
+											<span>{new Intl.NumberFormat('ru-RU').format(profit)} ₽</span>
+										</div>
+
+										<div className="value">
+											<span>100%</span>
+										</div>
+									</div>
+
+									<div className="row">
+										<span className="marketingName">Расходы:</span>
+										<div className="value">
+											<span>расходы в ₽</span>
+										</div>
+
+										<div className="value">
+											<span>100%</span>
+										</div>
+									</div>
+
 								</div>
 							</div>
 						</div>
 					</div>
-					{urls &&
-						<div className="urlsField">{urls.map(url => <a href={url} target="_blank">{url}</a>)}</div>
+
+					{selectedLeads.length > 0 &&
+						<div className="urlsField">
+							<h1 className="urlsHeading">Все лиды в Trello</h1>
+							<div className="urls">
+								{selectedLeads.map(lead =>
+									<a className="trelloLinks" href={lead.link} target="_blank" key={lead.link}>
+										<h3>{lead.name}</h3>
+									</a>
+								)}
+							</div>
+						</div>
 					}
 				</div>
 			}
@@ -470,4 +562,4 @@ class Marketing extends Component {
 	}
 }
 
-export default Marketing
+export default withCookies(Marketing)

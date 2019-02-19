@@ -173,7 +173,7 @@ class Cosmetology extends Component {
 		}).then(({ data: staffsClients }) => {
 			if (staffsClients.length === 300) {
 				this.handleStaffSubmit(e, ++page)
-				console.log('BO1')
+
 				this.setState({
 					yclientsData: staffsClients
 				})
@@ -236,6 +236,7 @@ class Cosmetology extends Component {
 						data: this.state.authData,
 					})
 				)
+				console.log('BO212')
 
 				async function processArray(array) {
 					await delayedRequest().then(( { data: allClients }) => {
@@ -252,6 +253,7 @@ class Cosmetology extends Component {
 							}
 						})
 					})
+					console.log('BO21')
 
 					// for (const record of array) {
 					// 	await delayedRequest(record.client)
@@ -268,8 +270,10 @@ class Cosmetology extends Component {
 					return true
 				}
 
+				console.log('BO22')
 				let complete = false
 				processArray(yclientsData).then(() => {
+					console.log('BO1')
 					const returnsOfAttendant = allMobiles.filter(item => attendantMobilesByReportDate.includes(item))
 
 					// все кто пришел сотрудника
@@ -442,7 +446,7 @@ class Cosmetology extends Component {
 		}
 
 		this.setState({
-			choosenCompanyID: e.target.value,
+			choosenCompanyID: +e.target.value,
 			choosenStaffID: staffID,
 		}, () => {
 			this.authYclients()
