@@ -54,6 +54,33 @@
 	font-weight: bold;
 }
 
+.urlsHeading {
+	text-align: center;
+}
+
+.urlsField {
+	display: flex;
+	flex-direction: column;
+	margin: 50px 0;
+}
+
+.urls {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
+
+.trelloLinks {
+	padding: 10px;
+	margin-bottom: 20px;
+	background-image: -webkit-linear-gradient(45deg, #79a4d4, #25478c);
+	background-image: -o-linear-gradient(45deg, #79a4d4, #25478c);
+	background-image: linear-gradient(45deg, #79a4d4, #25478c);
+	border-radius: 15px;
+	color: #fff;
+}
+
 @media (max-width: 800px) {
 	.row .name,
 	.row .marketingName {

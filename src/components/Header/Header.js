@@ -5,7 +5,7 @@ import Button from './../../components/Button'
 import isMobile from './../../utils/is-mobile'
 import styles from './Header.css'
 
-import logo from './images/logo.png'
+import logo from './images/logo.jpg'
 
 const Header = () => (
 	<header className="header">
