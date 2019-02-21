@@ -99,7 +99,12 @@ class Marketing extends Component {
 		const requestEndDate = moment(choosenTillDate).format("YYYY-MM-DD")
 
 		request({
-			...config.yclientsAuthConfig,
+			url: 'https://api.yclients.com/api/v1/auth',
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'hu2x584xzw7y7fy34bg5',
+			},
 			data: this.state.authData
 		}).then(() => {
 			for (let i = 0; i < choosenCompanyIds.length; i++) {
@@ -118,7 +123,7 @@ class Marketing extends Component {
 
 						mobiles.map(mobile => {
 							if (record && record.client && record.client.phone.indexOf(mobile) !== -1) {
-								console.log(record.client, mobile, "SPLASH!")
+								// console.log(record.client, mobile, "SPLASH!")
 								result = true
 							}
 						})
@@ -126,7 +131,7 @@ class Marketing extends Component {
 						return result
 					})
 
-					console.log(filteredRecords, 'Yclients records filtered by trello')
+					// console.log(filteredRecords, 'Yclients records filtered by trello')
 
 					let profit = 0;
 
@@ -141,7 +146,8 @@ class Marketing extends Component {
 						}
 					}, 0)
 
-					console.log(profit, 'PROFIT')
+
+					console.log(alreadyFilteredRecords, filteredRecords, alreadyProfit, profit, 'PROFIT')
 
 					const companyId = choosenCompanyIds[i]
 
@@ -149,7 +155,7 @@ class Marketing extends Component {
 						allTraficRecords: {
 							...this.state.allTraficRecords,
 							[companyId]: {
-								records: [...alreadyFiltedRecords, ...filteredRecords],
+								records: [...alreadyFilteredRecords, ...filteredRecords],
 								profit: alreadyProfit + profit,
 							},
 						}
@@ -355,6 +361,8 @@ class Marketing extends Component {
 			fullData = [...recallData, ...almostData, ...failData, ...successData, ...cameData]
 
 			selectedCompanies.map((current) => profit += allTraficRecords[config.mapperCompanies[current]].profit)
+
+			console.log(allTraficRecords, 'BLYAT')
 		}
 
 		return (
@@ -431,10 +439,11 @@ class Marketing extends Component {
 										<div>
 											<h3>Филиал</h3>
 											<div className="buttonsField">
-												<Button className={cx('filterButton', { unChoosen: !selectedCompanies.includes('Киевская')})} onClick={() => this.handleChangeCompany('Киевская')}>Киевская</Button>
-												<Button className={cx('filterButton', { unChoosen: !selectedCompanies.includes('Ярославль')})} onClick={() => this.handleChangeCompany('Ярославль')}>Ярославль</Button>
-												<Button className={cx('filterButton', { unChoosen: !selectedCompanies.includes('Брянск')})} onClick={() => this.handleChangeCompany('Брянск')}>Брянск</Button>
-												<Button className={cx('filterButton', { unChoosen: !selectedCompanies.includes('Пятигорск')})} onClick={() => this.handleChangeCompany('Пятигорск')}>Пятигорск</Button>
+												<Button className={cx('filialButton', { unChoosen: !selectedCompanies.includes('Киевская')})} onClick={() => this.handleChangeCompany('Киевская')}>Киевская</Button>
+												<Button className={cx('filialButton', { unChoosen: !selectedCompanies.includes('Ярославль')})} onClick={() => this.handleChangeCompany('Ярославль')}>Ярославль</Button>
+												<Button className={cx('filialButton', { unChoosen: !selectedCompanies.includes('Брянск')})} onClick={() => this.handleChangeCompany('Брянск')}>Брянск</Button>
+												<Button className={cx('filialButton', { unChoosen: !selectedCompanies.includes('Пятигорск')})} onClick={() => this.handleChangeCompany('Пятигорск')}>Пятигорск</Button>
+												<Button className={cx('filialButton', { unChoosen: !selectedCompanies.includes('Ессентуки')})} onClick={() => this.handleChangeCompany('Ессентуки')}>Ессентуки</Button>
 											</div>
 										</div>
 									</div>
@@ -523,7 +532,7 @@ class Marketing extends Component {
 										</div>
 
 										<div className="value">
-											<span>100%</span>
+											<span>—</span>
 										</div>
 									</div>
 
@@ -534,7 +543,7 @@ class Marketing extends Component {
 										</div>
 
 										<div className="value">
-											<span>100%</span>
+											<span>—</span>
 										</div>
 									</div>
 

@@ -23,13 +23,22 @@
 .buttonsField {
 	display: flex;
 	justify-content: space-around;
+	flex-wrap: wrap;
+	max-width: 100%;
+	margin: 0 auto;
 }
 
-.filterButton {
+.filterButton,
+.filialButton {
 	margin: 0 !important;
 	margin-right: 8px !important;
 	border: 1px solid #bdbdbd;
 	padding: 5px 20px;
+}
+
+.filialButton {
+	width: 20%;
+	margin-bottom: 20px !important;
 }
 
 .unChoosen {
