@@ -2,7 +2,7 @@ import moment from 'moment';
 
 const getState = (props) => ({
 	profit: 0,
-	choosenCompanyIds: ['170884', '178997', '178998', '150855'], // YCLIENTS киевская ярик брянск пятигорск
+	choosenCompanyIds: ['170884', '178997', '178998', '150855', '197296'], // YCLIENTS киевская ярик брянск пятигорск ессентуки
 	yclientsData: null,
 	allTraficRecords: {
 		'170884': {
@@ -21,6 +21,10 @@ const getState = (props) => ({
 			records: [],
 			profit: null
 		},
+		'197296': {
+			records: [],
+			profit: null
+		}
 	},
 	authData: {
 		login: props.cookies.get('login') || null,
@@ -34,7 +38,7 @@ const getState = (props) => ({
 	choosenFormattedTillDate: moment().format('DD/MM/YYYY'),
 	selectedAdTypes: ['ВК', 'Instagram'],
 	selectedManagers: ['Love', 'Kris', 'Marina'],
-	selectedCompanies: ['Киевская', 'Ярославль', 'Брянск', 'Пятигорск'],
+	selectedCompanies: ['Киевская', 'Ярославль', 'Брянск', 'Пятигорск', 'Ессентуки'],
 	selectedLeads: [], //  name/урлы на выбранный тип карточек при клике
 	isLoading: false,
 })

@@ -5,6 +5,7 @@
 
 // ID колонок для понимания
 // const lists = {
+//	'5c18f91ce773ab78186d52e2' // Новые лиды
 // 	'recallKris': '5c52d09ca61c157ad5d3572c', // "На перезвон (Кристина)"
 // 	'recallLove': '5c41badc0b6e4163ec6dee0b', // "На перезвон (Любовь)"
 // 	'recallMarina': '5c599ae87acfc2222892c32c', // "На перезвон (Марина)"
@@ -70,6 +71,7 @@ const mapperCompanies = {
 	'Ярославль': '178997',
 	'Брянск': '178998',
 	'Пятигорск': '150855',
+	'Ессентуки': '197296'
 }
 
 // Yclients partner ID
@@ -81,6 +83,10 @@ const userID = '7a140112eded9ee20ba43f03406138cf';
 
 // Забиваем сделками из Трелло по столбцам за период
 const allData = {
+	'5c18f91ce773ab78186d52e2': {
+		name: 'Новые лиды',
+		data: [],
+	},
 	'5c52d09ca61c157ad5d3572c': {
 		name: "На перезвон (Кристина)",
 		data: []
@@ -143,15 +149,6 @@ const allData = {
 	}
 }
 
-const yclientsAuthConfig = {
-	url: 'https://api.yclients.com/api/v1/auth',
-	method: 'POST',
-	headers: {
-		'Content-Type': 'application/json',
-		'Authorization': 'hu2x584xzw7y7fy34bg5',
-	},
-}
-
 const config = {
 	allData,
 	managerIds,
@@ -159,8 +156,7 @@ const config = {
 	trelloStates,
 	tariff,
 	partnerID,
-	userID,
-	yclientsAuthConfig
+	userID
 }
 
 export default config
