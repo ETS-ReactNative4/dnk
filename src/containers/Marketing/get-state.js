@@ -37,7 +37,7 @@ const getState = (props) => ({
 	choosenTillDate: moment(),
 	choosenFormattedTillDate: moment().format('DD/MM/YYYY'),
 	selectedAdTypes: ['ВК', 'Instagram'],
-	selectedManagers: ['Love', 'Kris', 'Marina'],
+	selectedManagers: ['Laura'],
 	selectedCompanies: ['Киевская', 'Ярославль', 'Брянск', 'Пятигорск', 'Ессентуки'],
 	selectedLeads: [], //  name/урлы на выбранный тип карточек при клике
 	isLoading: false,

@@ -24,68 +24,44 @@ moment.locale('ru')
 
 
 // FACEBOOK APP SECRET 7a11f6e726873afab83f29ac9c29438c
-// AccessToken EAAJHlJxKpLQBAINIdlCIxlQeAHD3OTJMemcbOpL1DPZBZCQH5dlMnxcNzGmwyfcpvcD2YqIDvQPb7fz0TgOLZBbZADlpKqzcHTYka35f2e9ZCRyRRlnKEGYhs2ZCaCQH2Y0O3BL8gvP0LvGZBluU8z2oLr9S0rLsLYZD
+// AccessToken EAAJHlJxKpLQBAEeWjOgEInFBCYtpkTbwcWGRHBSxSzvevnF9OTBOBVH45P3lYaFwMs74CgzTHK28NDZAumPflnYLSHqwN27BOuETw3CWTW7dqZCSSMBfPVYcMr2c5V5TwvfBbOLQbUO3rQRaZA3dfgW2KSmKO121iZASEtM01BYjXWzaewU0
 
-//
-// const adsSdk = require('facebook-nodejs-business-sdk');
-// const accessToken = 'EAAJHlJxKpLQBAINIdlCIxlQeAHD3OTJMemcbOpL1DPZBZCQH5dlMnxcNzGmwyfcpvcD2YqIDvQPb7fz0TgOLZBbZADlpKqzcHTYka35f2e9ZCRyRRlnKEGYhs2ZCaCQH2Y0O3BL8gvP0LvGZBluU8z2oLr9S0rLsLYZD';
-// const api = adsSdk.FacebookAdsApi.init(accessToken);
-// const AdAccount = adsSdk.AdAccount;
-// const Lead = adsSdk.Lead;
-// const Ad = adsSdk.Ad;
-// const id = '23843158445810239'
-// const Campaign = adsSdk.Campaign;
-// const account = new AdAccount('act_132461390881309');
-// // api.setDebug(true);
-//
-// const f = async () => {
-//
-// 		let campaigns = await account.getCampaigns([Campaign.Fields.name], {
-// 			limit: 20,
-// 			[Campaign.Fields.effective_status]: [Campaign.EffectiveStatus.active],
-// 		});
-//
-// 		campaigns.forEach(c => {
-// 			console.log(c, 'CCCC')
-//
-// 			let fields, params;
-// 			fields = ['field_data'];
-// 			params = { 'filtering' : [{'field':'time_created','operator':'GREATER_THAN','value':1546549613}],};
-// 			const leadss = (new Ad(id)).getLeads(
-// 			  fields,
-// 			  params
-// 			).then(ans => console.log(ans));
-// 		});
-//
-// 		while (campaigns.hasNext()) {
-// 			campaigns = await campaigns.next();
-// 			campaigns.forEach(c => console.log(c.name));
-// 		}
-// };
-//
+const adsSdk = require('facebook-nodejs-business-sdk');
+const accessToken = 'EAAJHlJxKpLQBAEeWjOgEInFBCYtpkTbwcWGRHBSxSzvevnF9OTBOBVH45P3lYaFwMs74CgzTHK28NDZAumPflnYLSHqwN27BOuETw3CWTW7dqZCSSMBfPVYcMr2c5V5TwvfBbOLQbUO3rQRaZA3dfgW2KSmKO121iZASEtM01BYjXWzaewU0';
+const api = adsSdk.FacebookAdsApi.init(accessToken);
+const AdAccount = adsSdk.AdAccount;
+const Lead = adsSdk.Lead;
+const Ad = adsSdk.Ad;
+const id = '23843158445810239'
+const Campaign = adsSdk.Campaign;
+const account = new AdAccount('act_132461390881309');
+api.setDebug(true);
+
+const f = async () => {
+
+		let campaigns = await account.getCampaigns([Campaign.Fields.name], {
+			limit: 20,
+			[Campaign.Fields.effective_status]: [Campaign.EffectiveStatus.active],
+		});
+
+		campaigns.forEach(c => {
+
+			let fields, params;
+			fields = ['field_data'];
+			params = { 'filtering' : [{'field':'time_created','operator':'GREATER_THAN','value':1546549613}],};
+			const leadss = (new Ad(id)).getLeads(
+			  fields,
+			  params
+			).then(ans => console.log(ans, 'ans'));
+		});
+
+		while (campaigns.hasNext()) {
+			campaigns = await campaigns.next();
+			campaigns.forEach(c => console.log(c.name));
+		}
+};
+
 // f();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -227,7 +203,6 @@ class Marketing extends Component {
 				return phone
 			})
 
-			console.log(mobiles, 'mobiles')
 
 			this.authYclients(mobiles);
 
@@ -256,7 +231,6 @@ class Marketing extends Component {
 			link: data.shortUrl
 		}))
 
-		console.log(myData, 'myData')
 		this.setState({ selectedLeads })
 	}
 
@@ -281,14 +255,14 @@ class Marketing extends Component {
 		this.setState({ selectedCompanies: newSelectedCompanies })
 	}
 
-	calculateData = (type, love, kris, marina) => {
+	calculateData = (type, laura) => {
 		const { allData, selectedAdTypes, selectedManagers, selectedCompanies } = this.state
 
-		const preformattedData = [...allData[love].data, ...allData[kris].data]
+		const preformattedData = [...allData[laura].data]
 
-		if (marina) {
-			preformattedData.push(...allData[marina].data)
-		}
+		// if (marina) {
+		// 	preformattedData.push(...allData[marina].data)
+		// }
 
 		let calculatedData = preformattedData.filter(data => {
 			let result = false
@@ -350,19 +324,21 @@ class Marketing extends Component {
 		// Если выбран одинаковый день, показываем 1 день, а не период
 		const period = choosenFormattedDate === choosenFormattedTillDate ? moment(choosenDate).format("DD MMMM") : moment(choosenDate).format("DD MMMM") + " — " + moment(choosenTillDate).format("DD MMMM")
 
-		let recallData, almostData, failData, successData, cameData, fullData, profit = 0;
+		// let recallData, almostData, failData, successData, cameData, fullData, profit = 0;
+		let recallData, failData, successData, cameData, fullData, profit = 0;
 
 		if (dayData.length > 0) {
-			recallData = this.calculateData('recall', '5c52d09ca61c157ad5d3572c', '5c41badc0b6e4163ec6dee0b', '5c599ae87acfc2222892c32c')
-			almostData = this.calculateData('almost', '5c519b45a3796f533a12f678', '5c448ce56dd2794807f67484')
-			failData = this.calculateData('fail', '5c519bbfe37472244a349b35', '5c40749811c6847eb255a24c', '5c599af68d2ae576c3bd43e2')
-			successData = this.calculateData('success', '5c519bafd53bd95e92007589', '5c40748a0962938a10c1761e', '5c599aefa412b12ab3c50dcd')
-			cameData = this.calculateData('came', '5c519bd4e368320cb86860a1', '5c458f7a2079178eb8604a1c', '5c599afa80c92065602bc134')
-			fullData = [...recallData, ...almostData, ...failData, ...successData, ...cameData]
+			recallData = this.calculateData('recall', '5c938bd18398a1559edb48da')
+			// almostData = this.calculateData('almost', '5c519b45a3796f533a12f678', '5c448ce56dd2794807f67484')
+			failData = this.calculateData('fail', '5c938f92552353853cc0b868')
+			successData = this.calculateData('success', '5c938cbcb7b52f0f7143d067')
+			cameData = this.calculateData('came', '5c938d151bc558504d499682')
+			// fullData = [...recallData, ...almostData, ...failData, ...successData, ...cameData]
+			fullData = [...recallData, ...failData, ...successData, ...cameData]
 
 			selectedCompanies.map((current) => profit += allTraficRecords[config.mapperCompanies[current]].profit)
 
-			console.log(allTraficRecords, 'BLYAT')
+			console.log(allTraficRecords, 'allTraficRecords')
 		}
 
 		return (
@@ -421,16 +397,14 @@ class Marketing extends Component {
 											<h3>Р.К.</h3>
 											<div className="buttonsField">
 												<Button className={cx('filterButton', { unChoosen: !selectedAdTypes.includes('ВК')})} onClick={() => this.handleChangeAds('ВК')}>ВК</Button>
-												<Button className={cx('filterButton', { unChoosen: !selectedAdTypes.includes('Instagram')})} onClick={() => this.handleChangeAds('Instagram')}>Instgram</Button>
+												<Button className={cx('filterButton', { unChoosen: !selectedAdTypes.includes('Instagram')})} onClick={() => this.handleChangeAds('Instagram')}>Instagram</Button>
 											</div>
 										</div>
 
 										<div>
 											<h3>Менеджер</h3>
 											<div className="buttonsField">
-												<Button className={cx('filterButton', { unChoosen: !selectedManagers.includes('Love')})} onClick={() => this.handleChangeManager('Love')}>Любовь</Button>
-												<Button className={cx('filterButton', { unChoosen: !selectedManagers.includes('Kris')})} onClick={() => this.handleChangeManager('Kris')}>Кристина</Button>
-												<Button className={cx('filterButton', { unChoosen: !selectedManagers.includes('Marina')})} onClick={() => this.handleChangeManager('Marina')}>Марина</Button>
+												<Button className={cx('filterButton', { unChoosen: !selectedManagers.includes('Laura')})} onClick={() => this.handleChangeManager('Laura')}>Лаура</Button>
 											</div>
 										</div>
 									</div>
@@ -459,6 +433,28 @@ class Marketing extends Component {
 									</div>
 
 									<div className="row">
+										<span className="marketingName">Все лиды:</span>
+										<div className="value">
+											<span>{fullData.length}</span>
+										</div>
+
+										<div className="value">
+											<span>100%</span>
+										</div>
+									</div>
+
+									<div className="row">
+										<span className="marketingName" onClick={() => this.handleClick('success')}>Записанные:</span>
+										<div className="value">
+											<span>{successData.length}</span>
+										</div>
+
+										<div className="value">
+											<span>{(successData.length / fullData.length * 100).toFixed(1)}%</span>
+										</div>
+									</div>
+
+									<div className="row">
 										<span className="marketingName" onClick={() => this.handleClick('recall')}>На перезвон:</span>
 										<div className="value">
 											<span>{recallData.length}</span>
@@ -466,39 +462,6 @@ class Marketing extends Component {
 
 										<div className="value">
 											<span>{((recallData.length) / fullData.length * 100).toFixed(1)}%</span>
-										</div>
-									</div>
-
-									<div className="row">
-										<span className="marketingName" onClick={() => this.handleClick('almost')}>Дожать:</span>
-										<div className="value">
-											<span>{almostData.length}</span>
-										</div>
-
-										<div className="value">
-											<span>{(almostData.length / fullData.length * 100).toFixed(1)}%</span>
-										</div>
-									</div>
-
-									<div className="row">
-										<span className="marketingName" onClick={() => this.handleClick('fail')}>Не подтвердились:</span>
-										<div className="value">
-											<span>{failData.length}</span>
-										</div>
-
-										<div className="value">
-											<span>{(failData.length / fullData.length * 100).toFixed(1)}%</span>
-										</div>
-									</div>
-
-									<div className="row">
-										<span className="marketingName" onClick={() => this.handleClick('success')}>Подтвердились:</span>
-										<div className="value">
-											<span>{successData.length}</span>
-										</div>
-
-										<div className="value">
-											<span>{(successData.length / fullData.length * 100).toFixed(1)}%</span>
 										</div>
 									</div>
 
@@ -514,16 +477,18 @@ class Marketing extends Component {
 										</div>
 									</div>
 
+
 									<div className="row">
-										<span className="marketingName">Все лиды:</span>
+										<span className="marketingName" onClick={() => this.handleClick('fail')}>Не пришли:</span>
 										<div className="value">
-											<span>{fullData.length}</span>
+											<span>{failData.length}</span>
 										</div>
 
 										<div className="value">
-											<span>100%</span>
+											<span>{(failData.length / fullData.length * 100).toFixed(1)}%</span>
 										</div>
 									</div>
+
 
 									<div className="row">
 										<span className="marketingName">Выручка:</span>
