@@ -207,9 +207,11 @@ class Marketing extends Component {
 			this.authYclients(mobiles);
 
 			dayData.map(card => {
+				console.log(card)
 				config.allData[card.idList].data.push(card)
 			})
 
+			console.log(config.allData, 'allData')
 			this.setState({ dayData, allData: config.allData, isLoading: false })
 		})
 	}
@@ -325,16 +327,17 @@ class Marketing extends Component {
 		const period = choosenFormattedDate === choosenFormattedTillDate ? moment(choosenDate).format("DD MMMM") : moment(choosenDate).format("DD MMMM") + " — " + moment(choosenTillDate).format("DD MMMM")
 
 		// let recallData, almostData, failData, successData, cameData, fullData, profit = 0;
-		let recallData, failData, successData, cameData, fullData, profit = 0;
+		let newData, recallData, failData, successData, cameData, fullData, profit = 0;
 
 		if (dayData.length > 0) {
-			recallData = this.calculateData('recall', '5c938bd18398a1559edb48da')
 			// almostData = this.calculateData('almost', '5c519b45a3796f533a12f678', '5c448ce56dd2794807f67484')
-			failData = this.calculateData('fail', '5c938f92552353853cc0b868')
+			newData = this.state.allData['5c18f91ce773ab78186d52e2'].data
 			successData = this.calculateData('success', '5c938cbcb7b52f0f7143d067')
+			recallData = this.calculateData('recall', '5c938bd18398a1559edb48da')
 			cameData = this.calculateData('came', '5c938d151bc558504d499682')
+			failData = this.calculateData('fail', '5c938f92552353853cc0b868')
 			// fullData = [...recallData, ...almostData, ...failData, ...successData, ...cameData]
-			fullData = [...recallData, ...failData, ...successData, ...cameData]
+			fullData = [...newData, ...recallData, ...failData, ...successData, ...cameData]
 
 			selectedCompanies.map((current) => profit += allTraficRecords[config.mapperCompanies[current]].profit)
 
