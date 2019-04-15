@@ -197,17 +197,22 @@ class Marketing extends Component {
 			const reg = /((\+7|^7|^8|-| |\(|\)))/gm; // remove brackets and +7, 8, -
 
 			const mobiles = dayData.map(data => {
-				const fullPhone = data.desc.match(regex)[0]
-				const phone = fullPhone.replace(reg, '')
+				try {
+					const fullPhone = data.desc.match(regex)[0]
+					const phone = fullPhone.replace(reg, '')
 
-				return phone
+					return fullPhone
+				} catch (err) {
+					console.log(data, err, 'NO DATA DESC')
+				}
 			})
 
-
+			console.log(mobiles, 'mobiles')
 			this.authYclients(mobiles);
 
 			dayData.map(card => {
 				console.log(card)
+
 				config.allData[card.idList].data.push(card)
 			})
 

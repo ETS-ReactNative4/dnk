@@ -36,7 +36,7 @@ const request = async ({url, method = 'GET', data, headers = {}} /* : RequestTyp
 }
 
 const partnerID = 'hu2x584xzw7y7fy34bg5'
-const userID = '7a140112eded9ee20ba43f03406138cf'
+const userID = '6f1556022422bb13fafd998a6a653c62'
 
 class Cosmetology extends Component {
 	state = {
@@ -194,6 +194,7 @@ class Cosmetology extends Component {
 				const myArrMobiles = []
 
 				// вообще все записи сотрудника
+				console.log(yclientsData, 'DATA to CHECK')
 				for (let i = 0; i < yclientsData.length; i++) {
 					if (yclientsData[i].attendance !== -1) {
 						allMobiles.push(yclientsData[i].client.phone)
@@ -441,6 +442,8 @@ class Cosmetology extends Component {
 			staffID = 494436
 		} else if (e.target.value === '178998') { // брянск
 			staffID = 487324
+		} else if (e.target.value === '197296') { // ессентуки
+			staffID = 546375 // светлана
 		} else if (e.target.value === '169519') { // мотивация
 			staffID = 453426
 		}
@@ -483,6 +486,10 @@ class Cosmetology extends Component {
 		}, {
 			name: "Брянск",
 			id: 178998,
+			disabled: userLogin !== 'arslanbek.khasiev@mail.ru'
+		}, {
+			name: "Ессентуки",
+			id: 197296,
 			disabled: userLogin !== 'arslanbek.khasiev@mail.ru'
 		}, {
 			name: "Мотивация",
