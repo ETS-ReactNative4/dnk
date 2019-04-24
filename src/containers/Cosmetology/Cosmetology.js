@@ -247,7 +247,7 @@ class Cosmetology extends Component {
 								aimedClientsMobiles.push(client.client.phone)
 								aimedClients.push(client)
 							}
-							console.log('BO2')
+							console.log('BO2', client)
 							if (attendantMobilesByReportDate.includes(client.client.phone) && client.staff_id === choosenStaffID) {
 								myArrMobiles.push(client.client.phone)
 								myArr.push(client)
