@@ -342,7 +342,7 @@ class Marketing extends Component {
 			cameData = this.calculateData('came', '5c938d151bc558504d499682')
 			failData = this.calculateData('fail', '5c938f92552353853cc0b868')
 			// fullData = [...recallData, ...almostData, ...failData, ...successData, ...cameData]
-			fullData = [...newData, ...recallData, ...failData, ...successData, ...cameData]
+			fullData = [...recallData, ...failData, ...successData, ...cameData]
 
 			selectedCompanies.map((current) => profit += allTraficRecords[config.mapperCompanies[current]].profit)
 
