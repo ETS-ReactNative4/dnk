@@ -66,10 +66,10 @@ class Cosmetology extends Component {
 		let companyID = null
 		let staffID = null
 
-		if (userLogin === 'arslanbek.khasiev@mail.ru') {
+		if (userLogin === 'arslanbek.khasiev@mail.ru' || userLogin === '89661511975') {
 			companyID = 114454
 			staffID = 281693
-		}  else if (userLogin === 'usol-irina@yandex.ru') {
+		}  else if (userLogin === '89661511975') {
 			companyID = 114454
 			staffID = 264106
 		} else if (userLogin === '79100155524') {
@@ -108,7 +108,7 @@ class Cosmetology extends Component {
 			}).then((staffs) => {
 				// закрыть доступ к данным Юлии Романовной
 				const userLogin = this.props.cookies.get('login').toLowerCase()
-				if (userLogin !== 'arslanbek.khasiev@mail.ru') {
+				if (userLogin !== 'arslanbek.khasiev@mail.ru' || userLogin !== '89661511975') {
 					staffs = staffs.filter((staff) => staff.id !== 281693)
 				}
 
@@ -470,32 +470,33 @@ class Cosmetology extends Component {
 		const companies = [{
 			name: "Med yu med",
 			id: 114454,
-			disabled: userLogin !== 'arslanbek.khasiev@mail.ru' && userLogin !== 'usol-irina@yandex.ru'
+			disabled: userLogin !== 'arslanbek.khasiev@mail.ru' && userLogin !== '89661511975'
 		}, {
 			name: "Киевская",
 			id: 170884,
-			disabled: userLogin !== 'arslanbek.khasiev@mail.ru' && userLogin !== 'Dovar2008@gmail.com'
+			disabled: userLogin !== 'arslanbek.khasiev@mail.ru' && userLogin !== '89661511975'
 		}, {
 			name: "Пятигорск",
 			id: 150855,
-			disabled: userLogin !== 'arslanbek.khasiev@mail.ru'
+			disabled: userLogin !== 'arslanbek.khasiev@mail.ru' && userLogin !== '89661511975'
 		}, {
 			name: "Ярославль",
 			id: 178997,
-			disabled: userLogin !== 'arslanbek.khasiev@mail.ru'
+			disabled: userLogin !== 'arslanbek.khasiev@mail.ru' && userLogin !== '89661511975'
 		}, {
 			name: "Брянск",
 			id: 178998,
-			disabled: userLogin !== 'arslanbek.khasiev@mail.ru'
+			disabled: userLogin !== 'arslanbek.khasiev@mail.ru' && userLogin !== '89661511975'
 		}, {
 			name: "Ессентуки",
 			id: 197296,
-			disabled: userLogin !== 'arslanbek.khasiev@mail.ru'
-		}, {
-			name: "Мотивация",
-			id: 169519,
-			disabled: userLogin !== 'arslanbek.khasiev@mail.ru' && userLogin !== '79100155524'
+			disabled: userLogin !== 'arslanbek.khasiev@mail.ru' && userLogin !== '89661511975'
 		}]
+		// }, {
+		// 	name: "Мотивация",
+		// 	id: 169519,
+		// 	disabled: userLogin !== 'arslanbek.khasiev@mail.ru' && userLogin !== '89661511975'
+		// }]
 
 		if (this.state.authData.password) {
 			return (
